@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ContactSection extends StatefulWidget {
-  const ContactSection({Key? key}) : super(key: key);
+  const ContactSection({super.key});
 
   @override
   State<ContactSection> createState() => _ContactSectionState();
@@ -24,45 +24,42 @@ class _ContactSectionState extends State<ContactSection> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final width = MediaQuery.of(context).size.width;
-    final isSmallScreen = width < 800;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final theme = Theme.of(context);
+        final isSmallScreen = constraints.maxWidth < 800;
 
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isSmallScreen ? 20 : 100,
-        vertical: 60,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildSectionHeader(theme),
-          const SizedBox(height: 48),
-          isSmallScreen
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildContactForm(theme),
-                    const SizedBox(height: 48),
-                    _buildContactInfo(theme),
-                  ],
-                )
-              : Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      flex: 6,
-                      child: _buildContactForm(theme),
-                    ),
-                    const SizedBox(width: 48),
-                    Expanded(
-                      flex: 4,
-                      child: _buildContactInfo(theme),
-                    ),
-                  ],
-                ),
-        ],
-      ),
+        return Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: isSmallScreen ? 20 : 40,
+            vertical: 60,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildSectionHeader(theme),
+              const SizedBox(height: 48),
+              isSmallScreen
+                  ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildContactForm(theme),
+                      const SizedBox(height: 48),
+                      _buildContactInfo(theme),
+                    ],
+                  )
+                  : Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(flex: 6, child: _buildContactForm(theme)),
+                      const SizedBox(width: 48),
+                      Expanded(flex: 4, child: _buildContactInfo(theme)),
+                    ],
+                  ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -93,10 +90,7 @@ class _ContactSectionState extends State<ContactSection> {
           ],
         ),
         const SizedBox(height: 16),
-        Text(
-          "Contact Me",
-          style: theme.textTheme.titleLarge,
-        ),
+        Text("Contact Me", style: theme.textTheme.titleLarge),
         const SizedBox(height: 16),
         SizedBox(
           width: 600,
@@ -115,10 +109,7 @@ class _ContactSectionState extends State<ContactSection> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Send a Message",
-            style: theme.textTheme.titleMedium,
-          ),
+          Text("Send a Message", style: theme.textTheme.titleMedium),
           const SizedBox(height: 24),
           _buildTextField(
             controller: _nameController,
@@ -141,7 +132,9 @@ class _ContactSectionState extends State<ContactSection> {
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return "Please enter your email";
-              } else if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value)) {
+              } else if (!RegExp(
+                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+              ).hasMatch(value)) {
                 return "Please enter a valid email";
               }
               return null;
@@ -167,9 +160,10 @@ class _ContactSectionState extends State<ContactSection> {
             onExit: (_) => setState(() => _isHoveringSubmit = false),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              transform: _isHoveringSubmit
-                  ? (Matrix4.identity()..scale(1.05))
-                  : Matrix4.identity(),
+              transform:
+                  _isHoveringSubmit
+                      ? (Matrix4.identity()..scale(1.05))
+                      : Matrix4.identity(),
               child: ElevatedButton.icon(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
@@ -178,9 +172,7 @@ class _ContactSectionState extends State<ContactSection> {
                       SnackBar(
                         content: Text(
                           "Message sent successfully!",
-                          style: TextStyle(
-                            color: theme.colorScheme.onPrimary,
-                          ),
+                          style: TextStyle(color: theme.colorScheme.onPrimary),
                         ),
                         backgroundColor: theme.colorScheme.primary,
                       ),
@@ -202,7 +194,10 @@ class _ContactSectionState extends State<ContactSection> {
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
                   minimumSize: const Size(200, 54),
                 ),
               ),
@@ -222,24 +217,23 @@ class _ContactSectionState extends State<ContactSection> {
     String? Function(String?)? validator,
   }) {
     final theme = Theme.of(context);
-    
+
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        prefixIcon: Icon(
-          icon,
-          color: theme.colorScheme.primary,
-        ),
+        prefixIcon: Icon(icon, color: theme.colorScheme.primary),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: theme.colorScheme.primary),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: theme.colorScheme.primary.withOpacity(0.3)),
+          borderSide: BorderSide(
+            color: theme.colorScheme.primary.withOpacity(0.3),
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -278,10 +272,7 @@ class _ContactSectionState extends State<ContactSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Contact Information",
-          style: theme.textTheme.titleMedium,
-        ),
+        Text("Contact Information", style: theme.textTheme.titleMedium),
         const SizedBox(height: 24),
         ...contactInfos.map((info) {
           return Padding(
@@ -325,10 +316,7 @@ class _ContactSectionState extends State<ContactSection> {
           );
         }).toList(),
         const SizedBox(height: 32),
-        Text(
-          "Social Profiles",
-          style: theme.textTheme.titleMedium,
-        ),
+        Text("Social Profiles", style: theme.textTheme.titleMedium),
         const SizedBox(height: 16),
         Wrap(
           spacing: 8.0,
@@ -360,11 +348,7 @@ class _ContactSectionState extends State<ContactSection> {
                   color: theme.colorScheme.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  icon,
-                  color: theme.colorScheme.primary,
-                  size: 24,
-                ),
+                child: Icon(icon, color: theme.colorScheme.primary, size: 24),
               ),
               const SizedBox(height: 8),
               Text(

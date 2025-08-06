@@ -2,22 +2,67 @@ import 'package:flutter/material.dart';
 import 'dart:math' show min;
 
 class ProjectsSection extends StatefulWidget {
-  const ProjectsSection({Key? key}) : super(key: key);
+  const ProjectsSection({super.key});
 
   @override
   State<ProjectsSection> createState() => _ProjectsSectionState();
 }
 
-class _ProjectsSectionState extends State<ProjectsSection> with SingleTickerProviderStateMixin {
+class _ProjectsSectionState extends State<ProjectsSection>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  final List<String> _filterCategories = [
+  static const List<String> _filterCategories = [
     'All',
     'Web',
     'Mobile',
     'UI/UX',
-    'Backend'
+    // 'Backend',
   ];
   String _selectedCategory = 'All';
+
+  static const List<Map<String, dynamic>> _projects = [
+    {
+      'title': 'E-Commerce App',
+      'category': 'Mobile',
+      'icon': Icons.shopping_bag_outlined,
+      'description':
+          'A clean, modern e-commerce app with a seamless checkout process.',
+    },
+    {
+      'title': 'Portfolio Website',
+      'category': 'Web',
+      'icon': Icons.web_outlined,
+      'description': 'Responsive portfolio website built with Flutter web.',
+    },
+    {
+      'title': 'Task Manager',
+      'category': 'UI/UX',
+      'icon': Icons.check_circle_outline,
+      'description':
+          'A beautiful task management UI with intuitive interactions.',
+    },
+    {
+      'title': 'API Service',
+      'category': 'Backend',
+      'icon': Icons.settings_ethernet_outlined,
+      'description':
+          'RESTful API developed for a client project with secure auth.',
+    },
+    {
+      'title': 'Travel App',
+      'category': 'Mobile',
+      'icon': Icons.flight_outlined,
+      'description':
+          'User-friendly travel booking app with personalized recommendations.',
+    },
+    {
+      'title': 'Banking Dashboard',
+      'category': 'Web',
+      'icon': Icons.account_balance_outlined,
+      'description':
+          'Secure banking dashboard with real-time transaction monitoring.',
+    },
+  ];
 
   @override
   void initState() {
@@ -37,26 +82,28 @@ class _ProjectsSectionState extends State<ProjectsSection> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final mediaQuery = MediaQuery.of(context);
-    final width = mediaQuery.size.width;
-    final isSmallScreen = width < 800;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final theme = Theme.of(context);
+        final isSmallScreen = constraints.maxWidth < 800;
 
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isSmallScreen ? 20 : 100,
-        vertical: 60,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildSectionHeader(theme),
-          const SizedBox(height: 32),
-          _buildCategoryFilter(theme),
-          const SizedBox(height: 40),
-          _buildProjectsGrid(theme, isSmallScreen),
-        ],
-      ),
+        return Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: isSmallScreen ? 20 : 40,
+            vertical: 60,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildSectionHeader(theme),
+              const SizedBox(height: 32),
+              _buildCategoryFilter(theme),
+              const SizedBox(height: 40),
+              _buildProjectsGrid(theme, isSmallScreen, constraints.maxWidth),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -87,10 +134,7 @@ class _ProjectsSectionState extends State<ProjectsSection> with SingleTickerProv
           ],
         ),
         const SizedBox(height: 16),
-        Text(
-          "Featured Projects",
-          style: theme.textTheme.titleLarge,
-        ),
+        Text("Featured Projects", style: theme.textTheme.titleLarge),
         const SizedBox(height: 16),
         SizedBox(
           width: 600,
@@ -107,92 +151,64 @@ class _ProjectsSectionState extends State<ProjectsSection> with SingleTickerProv
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: _filterCategories.map((category) {
-          final isSelected = _selectedCategory == category;
-          return Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              child: ChoiceChip(
-                label: Text(
-                  category,
-                  style: TextStyle(
-                    color: isSelected 
-                        ? theme.colorScheme.onPrimary 
-                        : theme.colorScheme.primary,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        children:
+            _filterCategories.map((category) {
+              final isSelected = _selectedCategory == category;
+              return Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  child: ChoiceChip(
+                    label: Text(
+                      category,
+                      style: TextStyle(
+                        color:
+                            isSelected
+                                ? theme.colorScheme.onPrimary
+                                : theme.colorScheme.primary,
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
+                      ),
+                    ),
+                    selected: isSelected,
+                    selectedColor: theme.colorScheme.primary,
+                    backgroundColor: theme.colorScheme.surface,
+                    onSelected: (selected) {
+                      if (selected) {
+                        setState(() {
+                          _selectedCategory = category;
+                          _controller.reset();
+                          _controller.forward();
+                        });
+                      }
+                    },
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                   ),
                 ),
-                selected: isSelected,
-                selectedColor: theme.colorScheme.primary,
-                backgroundColor: theme.colorScheme.surface,
-                onSelected: (selected) {
-                  if (selected) {
-                    setState(() {
-                      _selectedCategory = category;
-                      _controller.reset();
-                      _controller.forward();
-                    });
-                  }
-                },
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              ),
-            ),
-          );
-        }).toList(),
+              );
+            }).toList(),
       ),
     );
   }
 
-  Widget _buildProjectsGrid(ThemeData theme, bool isSmallScreen) {
-    // Sample project data
-    final projects = [
-      {
-        'title': 'E-Commerce App',
-        'category': 'Mobile',
-        'icon': Icons.shopping_bag_outlined,
-        'description': 'A clean, modern e-commerce app with a seamless checkout process.',
-      },
-      {
-        'title': 'Portfolio Website',
-        'category': 'Web',
-        'icon': Icons.web_outlined,
-        'description': 'Responsive portfolio website built with Flutter web.',
-      },
-      {
-        'title': 'Task Manager',
-        'category': 'UI/UX',
-        'icon': Icons.check_circle_outline,
-        'description': 'A beautiful task management UI with intuitive interactions.',
-      },
-      {
-        'title': 'API Service',
-        'category': 'Backend',
-        'icon': Icons.settings_ethernet_outlined,
-        'description': 'RESTful API developed for a client project with secure auth.',
-      },
-      {
-        'title': 'Travel App',
-        'category': 'Mobile',
-        'icon': Icons.flight_outlined,
-        'description': 'User-friendly travel booking app with personalized recommendations.',
-      },
-      {
-        'title': 'Banking Dashboard',
-        'category': 'Web',
-        'icon': Icons.account_balance_outlined,
-        'description': 'Secure banking dashboard with real-time transaction monitoring.',
-      },
-    ];
-
+  Widget _buildProjectsGrid(
+    ThemeData theme,
+    bool isSmallScreen,
+    double screenWidth,
+  ) {
     // Filter projects based on selected category
-    final filteredProjects = _selectedCategory == 'All'
-        ? projects
-        : projects.where((p) => p['category'] == _selectedCategory).toList();
+    final filteredProjects =
+        _selectedCategory == 'All'
+            ? _projects
+            : _projects
+                .where((p) => p['category'] == _selectedCategory)
+                .toList();
 
     // Calculate grid cross-axis count based on screen width
-    final screenWidth = MediaQuery.of(context).size.width;
     int crossAxisCount = 3;
     if (screenWidth < 1200 && screenWidth >= 800) {
       crossAxisCount = 2;
@@ -227,10 +243,7 @@ class _ProjectsSectionState extends State<ProjectsSection> with SingleTickerProv
           itemCount: filteredProjects.length,
           itemBuilder: (context, index) {
             final project = filteredProjects[index];
-            final animation = Tween(
-              begin: 0.0,
-              end: 1.0,
-            ).animate(
+            final animation = Tween(begin: 0.0, end: 1.0).animate(
               CurvedAnimation(
                 parent: _controller,
                 curve: Interval(
@@ -294,7 +307,10 @@ class _ProjectsSectionState extends State<ProjectsSection> with SingleTickerProv
                       ),
                     ),
                     backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 0,
+                    ),
                   ),
                 ],
               ),
