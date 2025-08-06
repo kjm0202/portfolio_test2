@@ -41,7 +41,9 @@ class AppTheme {
     useMaterial3: true,
     colorScheme: lightColorScheme,
     scaffoldBackgroundColor: lightColorScheme.background,
-    textTheme: GoogleFonts.poppinsTextTheme(ThemeData.light().textTheme).copyWith(
+    textTheme: GoogleFonts.poppinsTextTheme(
+      ThemeData.light().textTheme,
+    ).copyWith(
       titleLarge: GoogleFonts.poppins(
         fontSize: 28,
         fontWeight: FontWeight.bold,
@@ -68,7 +70,7 @@ class AppTheme {
         color: lightColorScheme.onPrimary,
       ),
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: Colors.white,
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -94,10 +96,7 @@ class AppTheme {
       foregroundColor: lightColorScheme.onBackground,
       elevation: 0,
     ),
-    iconTheme: IconThemeData(
-      color: lightColorScheme.primary,
-      size: 24,
-    ),
+    iconTheme: IconThemeData(color: lightColorScheme.primary, size: 24),
     chipTheme: ChipThemeData(
       backgroundColor: lightColorScheme.surface,
       labelStyle: TextStyle(color: lightColorScheme.onSurface),
@@ -111,7 +110,9 @@ class AppTheme {
     useMaterial3: true,
     colorScheme: darkColorScheme,
     scaffoldBackgroundColor: darkColorScheme.background,
-    textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme).copyWith(
+    textTheme: GoogleFonts.poppinsTextTheme(
+      ThemeData.dark().textTheme,
+    ).copyWith(
       titleLarge: GoogleFonts.poppins(
         fontSize: 28,
         fontWeight: FontWeight.bold,
@@ -138,7 +139,7 @@ class AppTheme {
         color: darkColorScheme.onPrimary,
       ),
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: darkColorScheme.surface,
       elevation: 8,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -164,10 +165,7 @@ class AppTheme {
       foregroundColor: darkColorScheme.onSurface,
       elevation: 0,
     ),
-    iconTheme: IconThemeData(
-      color: darkColorScheme.primary,
-      size: 24,
-    ),
+    iconTheme: IconThemeData(color: darkColorScheme.primary, size: 24),
     chipTheme: ChipThemeData(
       backgroundColor: darkColorScheme.primary.withOpacity(0.2),
       labelStyle: TextStyle(color: darkColorScheme.onSurface),
