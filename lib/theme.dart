@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   // Light theme colors
@@ -37,30 +36,34 @@ class AppTheme {
     useMaterial3: true,
     colorScheme: lightColorScheme,
     scaffoldBackgroundColor: lightColorScheme.surface,
-    textTheme: GoogleFonts.poppinsTextTheme(
-      ThemeData.light().textTheme,
-    ).copyWith(
-      titleLarge: GoogleFonts.poppins(
+    fontFamily: 'PretendardVariable',
+    textTheme: TextTheme(
+      titleLarge: TextStyle(
+        fontFamily: 'PretendardVariable',
         fontSize: 28,
         fontWeight: FontWeight.bold,
         color: lightColorScheme.onSurface,
       ),
-      titleMedium: GoogleFonts.poppins(
+      titleMedium: TextStyle(
+        fontFamily: 'PretendardVariable',
         fontSize: 22,
         fontWeight: FontWeight.w600,
         color: lightColorScheme.onSurface,
       ),
-      bodyLarge: GoogleFonts.poppins(
+      bodyLarge: TextStyle(
+        fontFamily: 'PretendardVariable',
         fontSize: 16,
         height: 1.5,
         color: lightColorScheme.onSurface,
       ),
-      bodyMedium: GoogleFonts.poppins(
+      bodyMedium: TextStyle(
+        fontFamily: 'PretendardVariable',
         fontSize: 14,
         height: 1.5,
         color: lightColorScheme.onSurface,
       ),
-      labelLarge: GoogleFonts.poppins(
+      labelLarge: TextStyle(
+        fontFamily: 'PretendardVariable',
         fontSize: 16,
         fontWeight: FontWeight.w600,
         color: lightColorScheme.onPrimary,
@@ -95,9 +98,18 @@ class AppTheme {
     iconTheme: IconThemeData(color: lightColorScheme.primary, size: 24),
     chipTheme: ChipThemeData(
       backgroundColor: lightColorScheme.surface,
-      labelStyle: TextStyle(color: lightColorScheme.onSurface),
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      labelStyle: TextStyle(
+        color: lightColorScheme.onSurface,
+        fontFamily: 'PretendardVariable',
+        fontSize: 14,
+        height: 1.2,
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+      side: BorderSide(
+        color: lightColorScheme.secondary.withValues(alpha: 0.4),
+        width: 1,
+      ),
     ),
   );
 
@@ -106,37 +118,41 @@ class AppTheme {
     useMaterial3: true,
     colorScheme: darkColorScheme,
     scaffoldBackgroundColor: darkColorScheme.surface,
-    textTheme: GoogleFonts.poppinsTextTheme(
-      ThemeData.dark().textTheme,
-    ).copyWith(
-      titleLarge: GoogleFonts.poppins(
+    fontFamily: 'PretendardVariable',
+    textTheme: TextTheme(
+      titleLarge: TextStyle(
+        fontFamily: 'PretendardVariable',
         fontSize: 28,
         fontWeight: FontWeight.bold,
         color: darkColorScheme.onSurface,
       ),
-      titleMedium: GoogleFonts.poppins(
+      titleMedium: TextStyle(
+        fontFamily: 'PretendardVariable',
         fontSize: 22,
         fontWeight: FontWeight.w600,
         color: darkColorScheme.onSurface,
       ),
-      bodyLarge: GoogleFonts.poppins(
+      bodyLarge: TextStyle(
+        fontFamily: 'PretendardVariable',
         fontSize: 16,
         height: 1.5,
         color: darkColorScheme.onSurface,
       ),
-      bodyMedium: GoogleFonts.poppins(
+      bodyMedium: TextStyle(
+        fontFamily: 'PretendardVariable',
         fontSize: 14,
         height: 1.5,
         color: darkColorScheme.onSurface,
       ),
-      labelLarge: GoogleFonts.poppins(
+      labelLarge: TextStyle(
+        fontFamily: 'PretendardVariable',
         fontSize: 16,
         fontWeight: FontWeight.w600,
         color: darkColorScheme.onPrimary,
       ),
     ),
     cardTheme: CardThemeData(
-      color: darkColorScheme.surface,
+      color: Color(0xFF2F2F2F), // 메인 배경보다 밝은 회색
       elevation: 8,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
@@ -164,9 +180,18 @@ class AppTheme {
     iconTheme: IconThemeData(color: darkColorScheme.primary, size: 24),
     chipTheme: ChipThemeData(
       backgroundColor: darkColorScheme.primary.withValues(alpha: 0.2),
-      labelStyle: TextStyle(color: darkColorScheme.onSurface),
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      labelStyle: TextStyle(
+        color: darkColorScheme.onSurface,
+        fontFamily: 'PretendardVariable',
+        fontSize: 14,
+        height: 1.2,
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+      side: BorderSide(
+        color: darkColorScheme.primary.withValues(alpha: 0.5),
+        width: 1,
+      ),
     ),
   );
 }
