@@ -25,8 +25,10 @@ class _ContactSectionState extends State<ContactSection> {
 
   @override
   Widget build(BuildContext context) {
+    if (!mounted) return const SizedBox.shrink();
     return LayoutBuilder(
       builder: (context, constraints) {
+        if (!mounted) return const SizedBox.shrink();
         final theme = Theme.of(context);
 
         final isSmallScreen = constraints.maxWidth < 800;
@@ -66,6 +68,7 @@ class _ContactSectionState extends State<ContactSection> {
   }
 
   Widget _buildSectionHeader(ThemeData theme) {
+    if (!mounted) return const SizedBox.shrink();
     final localizations = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,6 +110,7 @@ class _ContactSectionState extends State<ContactSection> {
   }
 
   Widget _buildContactForm(ThemeData theme) {
+    if (!mounted) return const SizedBox.shrink();
     final localizations = AppLocalizations.of(context);
     return Form(
       key: _formKey,
@@ -160,8 +164,12 @@ class _ContactSectionState extends State<ContactSection> {
           ),
           const SizedBox(height: 32),
           MouseRegion(
-            onEnter: (_) => setState(() => _isHoveringSubmit = true),
-            onExit: (_) => setState(() => _isHoveringSubmit = false),
+            onEnter: (_) {
+              if (mounted) setState(() => _isHoveringSubmit = true);
+            },
+            onExit: (_) {
+              if (mounted) setState(() => _isHoveringSubmit = false);
+            },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               transform:
@@ -255,6 +263,7 @@ class _ContactSectionState extends State<ContactSection> {
   }
 
   Widget _buildContactInfo(ThemeData theme) {
+    if (!mounted) return const SizedBox.shrink();
     final localizations = AppLocalizations.of(context);
     final contactInfos = [
       {

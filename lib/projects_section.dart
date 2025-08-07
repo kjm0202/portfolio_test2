@@ -72,7 +72,13 @@ class _ProjectsSectionState extends State<ProjectsSection>
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
-    _controller.forward();
+    if (mounted) {
+      try {
+        _controller.forward();
+      } catch (e) {
+        // Controller might be disposed
+      }
+    }
   }
 
   @override
@@ -81,23 +87,14 @@ class _ProjectsSectionState extends State<ProjectsSection>
     super.dispose();
   }
 
-  double _getCardAspectRatio(double screenWidth, int crossAxisCount) {
-    // 화면 크기와 컬럼 수에 따라 카드 비율 조정
-    if (screenWidth < 600) {
-      return 1.1; // 모바일: 세로가 조금 더 긴 카드
-    } else if (screenWidth < 900) {
-      return 1.0; // 폴더블/태블릿: 정사각형에 가까운 카드
-    } else if (crossAxisCount == 2) {
-      return 1.1; // 중간 화면에서 2컬럼: 적당한 비율
-    } else {
-      return 1.2; // 큰 화면에서 3컬럼: 가로가 조금 더 긴 카드
-    }
-  }
+
 
   @override
   Widget build(BuildContext context) {
+    if (!mounted) return const SizedBox.shrink();
     return LayoutBuilder(
       builder: (context, constraints) {
+        if (!mounted) return const SizedBox.shrink();
         final theme = Theme.of(context);
         final isSmallScreen = constraints.maxWidth < 800;
 
@@ -122,6 +119,7 @@ class _ProjectsSectionState extends State<ProjectsSection>
   }
 
   Widget _buildSectionHeader(ThemeData theme) {
+    if (!mounted) return const SizedBox.shrink();
     final localizations = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,6 +161,7 @@ class _ProjectsSectionState extends State<ProjectsSection>
   }
 
   Widget _buildCategoryFilter(ThemeData theme) {
+    if (!mounted) return const SizedBox.shrink();
     final localizations = AppLocalizations.of(context);
 
     String getCategoryLabel(String category) {
@@ -209,12 +208,18 @@ class _ProjectsSectionState extends State<ProjectsSection>
                     selectedColor: theme.colorScheme.primary,
                     backgroundColor: theme.colorScheme.surface,
                     onSelected: (selected) {
-                      if (selected) {
+                      if (selected && mounted) {
                         setState(() {
                           _selectedCategory = category;
-                          _controller.reset();
-                          _controller.forward();
                         });
+                        if (mounted) {
+                          try {
+                            _controller.reset();
+                            _controller.forward();
+                          } catch (e) {
+                            // Controller might be disposed
+                          }
+                        }
                       }
                     },
                     padding: const EdgeInsets.symmetric(
@@ -234,6 +239,7 @@ class _ProjectsSectionState extends State<ProjectsSection>
     bool isSmallScreen,
     double screenWidth,
   ) {
+    if (!mounted) return const SizedBox.shrink();
     final localizations = AppLocalizations.of(context);
     // Filter projects based on selected category
     final filteredProjects =
@@ -243,16 +249,16 @@ class _ProjectsSectionState extends State<ProjectsSection>
                 .where((p) => p['category'] == _selectedCategory)
                 .toList();
 
-    // Calculate grid cross-axis count based on screen width with better breakpoints
-    int crossAxisCount;
+    // Calculate card width based on screen width
+    double cardWidth;
     if (screenWidth >= 1200) {
-      crossAxisCount = 3;
+      cardWidth = (screenWidth - 80 - 48) / 3; // 3 columns with padding and spacing
     } else if (screenWidth >= 900) {
-      crossAxisCount = 2; // 폴더블 폰 펼친 상태 (900-1200px)
+      cardWidth = (screenWidth - 80 - 24) / 2; // 2 columns
     } else if (screenWidth >= 600) {
-      crossAxisCount = 2; // 태블릿 세로 모드 (600-900px)
+      cardWidth = (screenWidth - 80 - 24) / 2; // 2 columns
     } else {
-      crossAxisCount = 1; // 일반 폰 (600px 미만)
+      cardWidth = screenWidth - 40; // 1 column with padding
     }
 
     if (filteredProjects.isEmpty) {
@@ -270,18 +276,15 @@ class _ProjectsSectionState extends State<ProjectsSection>
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
-            crossAxisSpacing: screenWidth < 600 ? 16 : 24,
-            mainAxisSpacing: screenWidth < 600 ? 16 : 24,
-            childAspectRatio: _getCardAspectRatio(screenWidth, crossAxisCount),
-          ),
-          itemCount: filteredProjects.length,
-          itemBuilder: (context, index) {
-            final project = filteredProjects[index];
+        if (!mounted) {
+          return const SizedBox.shrink();
+        }
+        return Wrap(
+          spacing: screenWidth < 600 ? 16 : 24,
+          runSpacing: screenWidth < 600 ? 16 : 24,
+          children: filteredProjects.asMap().entries.map((entry) {
+            final index = entry.key;
+            final project = entry.value;
             final animation = Tween(begin: 0.0, end: 1.0).animate(
               CurvedAnimation(
                 parent: _controller,
@@ -300,16 +303,20 @@ class _ProjectsSectionState extends State<ProjectsSection>
                   begin: const Offset(0, 0.2),
                   end: Offset.zero,
                 ).animate(animation),
-                child: _buildProjectCard(theme, project),
+                child: SizedBox(
+                  width: cardWidth,
+                  child: _buildProjectCard(theme, project),
+                ),
               ),
             );
-          },
+          }).toList(),
         );
       },
     );
   }
 
   Widget _buildProjectCard(ThemeData theme, Map<String, dynamic> project) {
+    if (!mounted) return const SizedBox.shrink();
     final localizations = AppLocalizations.of(context);
 
     String getProjectTitle(String title) {
@@ -403,11 +410,11 @@ class _ProjectsSectionState extends State<ProjectsSection>
                 ),
               ),
               const SizedBox(height: 12),
-              Expanded(
-                child: Text(
-                  getProjectDescription(project['description'] as String),
-                  style: theme.textTheme.bodyMedium,
-                ),
+              Text(
+                getProjectDescription(project['description'] as String),
+                style: theme.textTheme.bodyMedium,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 20),
               Row(

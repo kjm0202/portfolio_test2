@@ -57,6 +57,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
   }
 
   void _onScroll() {
+    if (!mounted) return;
     final shouldBeScrolled = scrollController.offset > 20;
     if (shouldBeScrolled != isScrolled) {
       setState(() {
@@ -66,6 +67,8 @@ class _PortfolioPageState extends State<PortfolioPage> {
   }
 
   void _scrollToSection(int index) {
+    if (!mounted) return;
+    
     GlobalKey? targetKey;
 
     switch (index) {
@@ -80,7 +83,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
         break;
     }
 
-    if (targetKey?.currentContext != null) {
+    if (targetKey?.currentContext != null && mounted) {
       final RenderBox renderBox =
           targetKey!.currentContext!.findRenderObject() as RenderBox;
       final position = renderBox.localToGlobal(Offset.zero);
@@ -211,11 +214,13 @@ class _PortfolioPageState extends State<PortfolioPage> {
                   right: 32,
                   child: FloatingActionButton(
                     onPressed: () {
-                      scrollController.animateTo(
-                        0,
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.easeInOut,
-                      );
+                      if (mounted) {
+                        scrollController.animateTo(
+                          0,
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.easeInOut,
+                        );
+                      }
                     },
                     backgroundColor: theme.colorScheme.primary,
                     child: Icon(
