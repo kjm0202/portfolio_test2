@@ -91,16 +91,16 @@ class IntroSection extends StatelessWidget {
                             ),
                             OutlinedButton(
                               onPressed: () {},
-                              child: Text(
-                                "Contact Me",
-                                style: TextStyle(
-                                  color: theme.colorScheme.primary,
-                                ),
-                              ),
                               style: OutlinedButton.styleFrom(
                                 padding: EdgeInsets.symmetric(
                                   horizontal: isSmallScreen ? 16 : 24,
                                   vertical: 16,
+                                ),
+                              ),
+                              child: Text(
+                                "Contact Me",
+                                style: TextStyle(
+                                  color: theme.colorScheme.primary,
                                 ),
                               ),
                             ),
@@ -142,8 +142,12 @@ class IntroSection extends StatelessWidget {
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
                     colors: [
-                      Theme.of(context).colorScheme.primary.withOpacity(0.8),
-                      Theme.of(context).colorScheme.secondary.withOpacity(0.8),
+                      Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.8),
+                      Theme.of(
+                        context,
+                      ).colorScheme.secondary.withValues(alpha: 0.8),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -152,7 +156,7 @@ class IntroSection extends StatelessWidget {
                     BoxShadow(
                       color: Theme.of(
                         context,
-                      ).colorScheme.primary.withOpacity(0.3),
+                      ).colorScheme.primary.withValues(alpha: 0.3),
                       blurRadius: 25,
                       offset: const Offset(0, 10),
                     ),
@@ -166,7 +170,7 @@ class IntroSection extends StatelessWidget {
                     size: isSmallScreen ? 120 : 150,
                     color: Theme.of(
                       context,
-                    ).colorScheme.onPrimary.withOpacity(0.5),
+                    ).colorScheme.onPrimary.withValues(alpha: 0.5),
                   ),
                 ),
               ),
@@ -184,7 +188,7 @@ class IntroSection extends StatelessWidget {
                       BoxShadow(
                         color: Theme.of(
                           context,
-                        ).colorScheme.primary.withOpacity(0.3),
+                        ).colorScheme.primary.withValues(alpha: 0.3),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -243,7 +247,7 @@ class IntroSection extends StatelessWidget {
                       BoxShadow(
                         color: Theme.of(
                           context,
-                        ).colorScheme.primary.withOpacity(0.2),
+                        ).colorScheme.primary.withValues(alpha: 0.2),
                         blurRadius: 8,
                         offset: const Offset(0, 3),
                       ),

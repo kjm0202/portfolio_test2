@@ -288,7 +288,7 @@ class _ProjectsSectionState extends State<ProjectsSection>
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.1),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
@@ -306,7 +306,9 @@ class _ProjectsSectionState extends State<ProjectsSection>
                         fontSize: 12,
                       ),
                     ),
-                    backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+                    backgroundColor: theme.colorScheme.primary.withValues(
+                      alpha: 0.1,
+                    ),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,
                       vertical: 0,

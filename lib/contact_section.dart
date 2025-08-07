@@ -232,7 +232,7 @@ class _ContactSectionState extends State<ContactSection> {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: theme.colorScheme.primary.withOpacity(0.3),
+            color: theme.colorScheme.primary.withValues(alpha: 0.3),
           ),
         ),
         focusedBorder: OutlineInputBorder(
@@ -283,7 +283,7 @@ class _ContactSectionState extends State<ContactSection> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withOpacity(0.1),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -314,7 +314,7 @@ class _ContactSectionState extends State<ContactSection> {
               ],
             ),
           );
-        }).toList(),
+        }),
         const SizedBox(height: 32),
         Text("Social Profiles", style: theme.textTheme.titleMedium),
         const SizedBox(height: 16),
@@ -345,7 +345,7 @@ class _ContactSectionState extends State<ContactSection> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withOpacity(0.1),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(icon, color: theme.colorScheme.primary, size: 24),
