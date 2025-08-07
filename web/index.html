@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -27,12 +28,185 @@
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="icon" type="image/png" href="favicon.png" />
 
   <title>portfolio_test2</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background-color: #f5f5f7;
+      overflow: hidden;
+    }
+
+    .loading-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: #f5f5f7;
+      z-index: 9999;
+      transition: opacity 0.5s ease-out;
+    }
+
+    .loading-container.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* From Uiverse.io by angelo2004-mateus */
+    .loader {
+      width: 10rem;
+      height: 10rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      border-radius: 50%;
+      box-shadow: -5px -5px 9px rgba(255, 255, 255, 0.45), 5px 5px 9px rgba(94, 104, 121, 0.137);
+      margin-bottom: 2rem;
+    }
+
+    .loader:before {
+      height: 4rem;
+      width: 4rem;
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      background: #ececec;
+      border-radius: 50%;
+      border: 2px solid #e2e1e1;
+      box-shadow: inset -5px -5px 9px rgba(255, 255, 255, 0.45), 5px 5px 9px rgba(94, 104, 121, 0.3);
+    }
+
+    .loader span {
+      width: 80%;
+      height: 80%;
+      border-radius: 50%;
+      background: linear-gradient(to bottom, rgb(89, 92, 252), rgb(226, 57, 241));
+      animation: rotate 1s infinite linear;
+    }
+
+    .loading-text {
+      font-size: 1.2rem;
+      color: #333;
+      font-weight: 500;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    @keyframes rotate {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+      body, .loading-container {
+        background-color: #242424;
+      }
+      
+      .loading-text {
+        color: #fff;
+      }
+      
+      .loader:before {
+        background: #333;
+        border-color: #444;
+      }
+    }
+
+    /* Dark mode class support for dynamic theme switching */
+    body.dark-mode, .loading-container.dark-mode {
+      background-color: #242424;
+    }
+    
+    .dark-mode .loading-text {
+      color: #fff;
+    }
+    
+    .dark-mode .loader:before {
+      background: #333;
+      border-color: #444;
+    }
+  </style>
 </head>
+
 <body>
-  <script src="flutter_bootstrap.js" async></script>
+  <div id="loading-container" class="loading-container">
+    <div class="loader">
+      <span></span>
+    </div>
+    <div id="loading-text" class="loading-text">Loading Entrypoint...</div>
+  </div>
+
+  <script>
+    {{flutter_js}}
+    {{flutter_build_config}}
+
+    const loadingContainer = document.getElementById('loading-container');
+    const loadingText = document.getElementById('loading-text');
+    
+    // 시스템 언어 감지 및 텍스트 설정
+    const isKorean = navigator.language.startsWith('ko');
+    const loadingMessages = {
+      entrypoint: isKorean ? "진입점 로드 중..." : "Loading Entrypoint...",
+      engine: isKorean ? "엔진 초기화 중..." : "Initializing engine...",
+      app: isKorean ? "앱 실행 중..." : "Running app..."
+    };
+    
+    // 초기 텍스트 설정
+    loadingText.textContent = loadingMessages.entrypoint;
+    
+    // 다크모드 감지 및 적용
+    function updateTheme() {
+      const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+        loadingContainer.classList.add('dark-mode');
+      } else {
+        document.body.classList.remove('dark-mode');
+        loadingContainer.classList.remove('dark-mode');
+      }
+    }
+    
+    // 초기 테마 적용
+    updateTheme();
+    
+    // 테마 변경 감지
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
+    
+    _flutter.loader.load({
+      onEntrypointLoaded: async function (engineInitializer) {
+        loadingText.textContent = loadingMessages.engine;
+        const appRunner = await engineInitializer.initializeEngine();
+
+        loadingText.textContent = loadingMessages.app;
+        await appRunner.runApp();
+        
+        // Flutter 앱이 완전히 로드된 후 로딩 화면 제거
+        setTimeout(() => {
+          loadingContainer.classList.add('fade-out');
+          setTimeout(() => {
+            loadingContainer.remove();
+            document.body.style.overflow = 'auto';
+          }, 500);
+        }, 500);
+      }
+    });
+  </script>
 </body>
+
 </html>
