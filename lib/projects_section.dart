@@ -81,6 +81,19 @@ class _ProjectsSectionState extends State<ProjectsSection>
     super.dispose();
   }
 
+  double _getCardAspectRatio(double screenWidth, int crossAxisCount) {
+    // 화면 크기와 컬럼 수에 따라 카드 비율 조정
+    if (screenWidth < 600) {
+      return 1.1; // 모바일: 세로가 조금 더 긴 카드
+    } else if (screenWidth < 900) {
+      return 1.0; // 폴더블/태블릿: 정사각형에 가까운 카드
+    } else if (crossAxisCount == 2) {
+      return 1.1; // 중간 화면에서 2컬럼: 적당한 비율
+    } else {
+      return 1.2; // 큰 화면에서 3컬럼: 가로가 조금 더 긴 카드
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -230,12 +243,16 @@ class _ProjectsSectionState extends State<ProjectsSection>
                 .where((p) => p['category'] == _selectedCategory)
                 .toList();
 
-    // Calculate grid cross-axis count based on screen width
-    int crossAxisCount = 3;
-    if (screenWidth < 1200 && screenWidth >= 800) {
-      crossAxisCount = 2;
-    } else if (screenWidth < 800) {
-      crossAxisCount = 1;
+    // Calculate grid cross-axis count based on screen width with better breakpoints
+    int crossAxisCount;
+    if (screenWidth >= 1200) {
+      crossAxisCount = 3;
+    } else if (screenWidth >= 900) {
+      crossAxisCount = 2; // 폴더블 폰 펼친 상태 (900-1200px)
+    } else if (screenWidth >= 600) {
+      crossAxisCount = 2; // 태블릿 세로 모드 (600-900px)
+    } else {
+      crossAxisCount = 1; // 일반 폰 (600px 미만)
     }
 
     if (filteredProjects.isEmpty) {
@@ -258,9 +275,9 @@ class _ProjectsSectionState extends State<ProjectsSection>
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: crossAxisCount,
-            crossAxisSpacing: 24,
-            mainAxisSpacing: 24,
-            childAspectRatio: isSmallScreen ? 1.1 : 1.2,
+            crossAxisSpacing: screenWidth < 600 ? 16 : 24,
+            mainAxisSpacing: screenWidth < 600 ? 16 : 24,
+            childAspectRatio: _getCardAspectRatio(screenWidth, crossAxisCount),
           ),
           itemCount: filteredProjects.length,
           itemBuilder: (context, index) {
