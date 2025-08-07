@@ -4,15 +4,24 @@ import 'projects_section.dart';
 import 'contact_section.dart';
 import 'footer.dart';
 import 'theme_toggle.dart';
+import 'language_toggle.dart';
+import 'settings_menu.dart';
+import 'app_localizations.dart';
 
 class PortfolioPage extends StatefulWidget {
   final bool isDarkMode;
-  final VoidCallback onThemeToggle;
+  final ThemeMode themeMode;
+  final ValueChanged<ThemeMode> onThemeChanged;
+  final Locale currentLocale;
+  final ValueChanged<Locale> onLocaleChanged;
 
   const PortfolioPage({
     super.key,
     required this.isDarkMode,
-    required this.onThemeToggle,
+    required this.themeMode,
+    required this.onThemeChanged,
+    required this.currentLocale,
+    required this.onLocaleChanged,
   });
 
   @override
@@ -29,9 +38,9 @@ class _PortfolioPageState extends State<PortfolioPage> {
   final GlobalKey _contactKey = GlobalKey();
 
   static const _navItems = [
-    {'label': 'Home', 'icon': Icons.home_outlined, 'index': 0},
-    {'label': 'Projects', 'icon': Icons.work_outline, 'index': 1},
-    {'label': 'Contact', 'icon': Icons.mail_outline, 'index': 2},
+    {'key': 'home', 'icon': Icons.home_outlined, 'index': 0},
+    {'key': 'projects', 'icon': Icons.work_outline, 'index': 1},
+    {'key': 'contact', 'icon': Icons.mail_outline, 'index': 2},
   ];
 
   @override
@@ -109,30 +118,59 @@ class _PortfolioPageState extends State<PortfolioPage> {
                             ? theme.scaffoldBackgroundColor
                             : Colors.transparent,
                     title: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
                           Icons.code,
                           color: theme.colorScheme.primary,
-                          size: 28,
+                          size: isSmallScreen ? 24 : 28,
                         ),
                         const SizedBox(width: 8),
-                        Text(
-                          "John Developer",
-                          style: TextStyle(
-                            color: theme.colorScheme.onSurface,
-                            fontWeight: FontWeight.bold,
+                        Flexible(
+                          child: Text(
+                            AppLocalizations.of(context).developerName,
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurface,
+                              fontWeight: FontWeight.bold,
+                              fontSize: isSmallScreen ? 18 : 20,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
                     ),
                     actions: [
-                      if (!isSmallScreen) ..._buildNavItems(theme),
+                      if (!isSmallScreen) ...[
+                        ..._buildNavItems(theme),
+                        const SizedBox(width: 16),
+                      ],
+                      if (isSmallScreen)
+                        SettingsMenu(
+                          themeMode: widget.themeMode,
+                          isDarkMode: widget.isDarkMode,
+                          onThemeChanged: widget.onThemeChanged,
+                          currentLocale: widget.currentLocale,
+                          onLocaleChanged: widget.onLocaleChanged,
+                        )
+                      else
+                        Flexible(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              LanguageToggle(
+                                currentLocale: widget.currentLocale,
+                                onLocaleChanged: widget.onLocaleChanged,
+                              ),
+                              const SizedBox(width: 8),
+                              ThemeToggle(
+                                themeMode: widget.themeMode,
+                                isDarkMode: widget.isDarkMode,
+                                onThemeChanged: widget.onThemeChanged,
+                              ),
+                            ],
+                          ),
+                        ),
                       const SizedBox(width: 16),
-                      ThemeToggle(
-                        isDarkMode: widget.isDarkMode,
-                        onToggle: widget.onThemeToggle,
-                      ),
-                      const SizedBox(width: 24),
                     ],
                     bottom:
                         isSmallScreen
@@ -194,7 +232,22 @@ class _PortfolioPageState extends State<PortfolioPage> {
   }
 
   List<Widget> _buildNavItems(ThemeData theme) {
+    final localizations = AppLocalizations.of(context);
+
     return _navItems.map((item) {
+      String getLabel(String key) {
+        switch (key) {
+          case 'home':
+            return localizations.navHome;
+          case 'projects':
+            return localizations.navProjects;
+          case 'contact':
+            return localizations.navContact;
+          default:
+            return key;
+        }
+      }
+
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
         child: TextButton.icon(
@@ -205,7 +258,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
             size: 20,
           ),
           label: Text(
-            item['label'] as String,
+            getLabel(item['key'] as String),
             style: TextStyle(
               color: theme.colorScheme.primary,
               fontWeight: FontWeight.w500,

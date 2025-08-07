@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'app_localizations.dart';
 
 class Footer extends StatelessWidget {
   const Footer({super.key});
@@ -8,6 +9,7 @@ class Footer extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final theme = Theme.of(context);
+
         final isSmallScreen = constraints.maxWidth < 800;
         final isMediumScreen =
             constraints.maxWidth < 1000 && constraints.maxWidth >= 800;
@@ -31,19 +33,27 @@ class Footer extends StatelessWidget {
                   ? Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      _buildLogo(theme),
+                      _buildLogo(context, theme),
                       const SizedBox(height: 24),
-                      _buildNavLinks(theme, isSmallScreen || isMediumScreen),
+                      _buildNavLinks(
+                        context,
+                        theme,
+                        isSmallScreen || isMediumScreen,
+                      ),
                       const SizedBox(height: 24),
-                      _buildCopyright(theme),
+                      _buildCopyright(context, theme),
                     ],
                   )
                   : Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildLogo(theme),
-                      _buildNavLinks(theme, isSmallScreen || isMediumScreen),
-                      _buildCopyright(theme),
+                      _buildLogo(context, theme),
+                      _buildNavLinks(
+                        context,
+                        theme,
+                        isSmallScreen || isMediumScreen,
+                      ),
+                      _buildCopyright(context, theme),
                     ],
                   ),
         );
@@ -51,14 +61,14 @@ class Footer extends StatelessWidget {
     );
   }
 
-  Widget _buildLogo(ThemeData theme) {
+  Widget _buildLogo(BuildContext context, ThemeData theme) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(Icons.code, color: theme.colorScheme.primary, size: 28),
         const SizedBox(width: 8),
         Text(
-          "John Developer",
+          AppLocalizations.of(context).developerName,
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -69,8 +79,18 @@ class Footer extends StatelessWidget {
     );
   }
 
-  Widget _buildNavLinks(ThemeData theme, bool isSmallOrMedium) {
-    final links = ['Home', 'About', 'Projects', 'Contact'];
+  Widget _buildNavLinks(
+    BuildContext context,
+    ThemeData theme,
+    bool isSmallOrMedium,
+  ) {
+    final localizations = AppLocalizations.of(context);
+    final links = [
+      localizations.navHome,
+      localizations.navAbout,
+      localizations.navProjects,
+      localizations.navContact,
+    ];
 
     return isSmallOrMedium
         ? Wrap(
@@ -115,9 +135,9 @@ class Footer extends StatelessWidget {
         );
   }
 
-  Widget _buildCopyright(ThemeData theme) {
+  Widget _buildCopyright(BuildContext context, ThemeData theme) {
     return Text(
-      "© ${DateTime.now().year} John Developer. All rights reserved.",
+      "© ${DateTime.now().year} ${AppLocalizations.of(context).developerName}. ${AppLocalizations.of(context).allRightsReserved}",
       style: TextStyle(
         fontSize: 14,
         color: theme.colorScheme.onSurface.withValues(alpha: 0.7),

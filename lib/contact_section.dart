@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'app_localizations.dart';
 
 class ContactSection extends StatefulWidget {
   const ContactSection({super.key});
@@ -27,6 +28,7 @@ class _ContactSectionState extends State<ContactSection> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final theme = Theme.of(context);
+
         final isSmallScreen = constraints.maxWidth < 800;
 
         return Container(
@@ -64,6 +66,7 @@ class _ContactSectionState extends State<ContactSection> {
   }
 
   Widget _buildSectionHeader(ThemeData theme) {
+    final localizations = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -79,7 +82,7 @@ class _ContactSectionState extends State<ContactSection> {
             ),
             const SizedBox(width: 12),
             Text(
-              "GET IN TOUCH",
+              localizations.getInTouch,
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
@@ -90,12 +93,12 @@ class _ContactSectionState extends State<ContactSection> {
           ],
         ),
         const SizedBox(height: 16),
-        Text("Contact Me", style: theme.textTheme.titleLarge),
+        Text(localizations.contactTitle, style: theme.textTheme.titleLarge),
         const SizedBox(height: 16),
         SizedBox(
           width: 600,
           child: Text(
-            "Feel free to reach out if you're looking for a developer, have a question, or just want to connect.",
+            localizations.contactDescription,
             style: theme.textTheme.bodyLarge,
           ),
         ),
@@ -104,21 +107,22 @@ class _ContactSectionState extends State<ContactSection> {
   }
 
   Widget _buildContactForm(ThemeData theme) {
+    final localizations = AppLocalizations.of(context);
     return Form(
       key: _formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Send a Message", style: theme.textTheme.titleMedium),
+          Text(localizations.sendMessage, style: theme.textTheme.titleMedium),
           const SizedBox(height: 24),
           _buildTextField(
             controller: _nameController,
-            label: "Name",
-            hint: "Your name",
+            label: localizations.nameLabel,
+            hint: localizations.nameHint,
             icon: Icons.person_outline,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return "Please enter your name";
+                return localizations.pleaseEnterName;
               }
               return null;
             },
@@ -126,16 +130,16 @@ class _ContactSectionState extends State<ContactSection> {
           const SizedBox(height: 20),
           _buildTextField(
             controller: _emailController,
-            label: "Email",
-            hint: "Your email address",
+            label: localizations.emailLabel,
+            hint: localizations.emailHint,
             icon: Icons.email_outlined,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return "Please enter your email";
+                return localizations.pleaseEnterEmail;
               } else if (!RegExp(
                 r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
               ).hasMatch(value)) {
-                return "Please enter a valid email";
+                return localizations.pleaseEnterValidEmail;
               }
               return null;
             },
@@ -143,13 +147,13 @@ class _ContactSectionState extends State<ContactSection> {
           const SizedBox(height: 20),
           _buildTextField(
             controller: _messageController,
-            label: "Message",
-            hint: "Your message",
+            label: localizations.messageLabel,
+            hint: localizations.messageHint,
             icon: Icons.message_outlined,
             maxLines: 5,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return "Please enter your message";
+                return localizations.pleaseEnterMessage;
               }
               return null;
             },
@@ -171,7 +175,7 @@ class _ContactSectionState extends State<ContactSection> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                          "Message sent successfully!",
+                          localizations.messageSentSuccess,
                           style: TextStyle(color: theme.colorScheme.onPrimary),
                         ),
                         backgroundColor: theme.colorScheme.primary,
@@ -187,7 +191,7 @@ class _ContactSectionState extends State<ContactSection> {
                   color: theme.colorScheme.onPrimary,
                 ),
                 label: Text(
-                  "Send Message",
+                  localizations.sendMessageButton,
                   style: TextStyle(
                     color: theme.colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
@@ -251,20 +255,21 @@ class _ContactSectionState extends State<ContactSection> {
   }
 
   Widget _buildContactInfo(ThemeData theme) {
+    final localizations = AppLocalizations.of(context);
     final contactInfos = [
       {
         'icon': Icons.email_outlined,
-        'title': 'Email',
+        'title': localizations.email,
         'content': 'john.developer@example.com',
       },
       {
         'icon': Icons.phone_outlined,
-        'title': 'Phone',
+        'title': localizations.phone,
         'content': '+1 234 567 890',
       },
       {
         'icon': Icons.location_on_outlined,
-        'title': 'Location',
+        'title': localizations.location,
         'content': 'San Francisco, CA',
       },
     ];
@@ -272,7 +277,10 @@ class _ContactSectionState extends State<ContactSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Contact Information", style: theme.textTheme.titleMedium),
+        Text(
+          localizations.contactInformation,
+          style: theme.textTheme.titleMedium,
+        ),
         const SizedBox(height: 24),
         ...contactInfos.map((info) {
           return Padding(
@@ -316,16 +324,24 @@ class _ContactSectionState extends State<ContactSection> {
           );
         }),
         const SizedBox(height: 32),
-        Text("Social Profiles", style: theme.textTheme.titleMedium),
+        Text(localizations.socialProfiles, style: theme.textTheme.titleMedium),
         const SizedBox(height: 16),
         Wrap(
           spacing: 8.0,
           runSpacing: 12.0,
           children: [
-            _buildSocialButton(Icons.facebook_outlined, "Facebook", theme),
-            _buildSocialButton(Icons.beach_access, "Twitter", theme),
-            _buildSocialButton(Icons.work, "LinkedIn", theme),
-            _buildSocialButton(Icons.code, "GitHub", theme),
+            _buildSocialButton(
+              Icons.facebook_outlined,
+              localizations.facebook,
+              theme,
+            ),
+            _buildSocialButton(
+              Icons.beach_access,
+              localizations.twitter,
+              theme,
+            ),
+            _buildSocialButton(Icons.work, localizations.linkedin, theme),
+            _buildSocialButton(Icons.code, localizations.github, theme),
           ],
         ),
       ],

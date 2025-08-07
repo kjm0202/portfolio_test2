@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' show min;
+import 'app_localizations.dart';
 
 class ProjectsSection extends StatefulWidget {
   const ProjectsSection({super.key});
@@ -108,6 +109,7 @@ class _ProjectsSectionState extends State<ProjectsSection>
   }
 
   Widget _buildSectionHeader(ThemeData theme) {
+    final localizations = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -123,7 +125,7 @@ class _ProjectsSectionState extends State<ProjectsSection>
             ),
             const SizedBox(width: 12),
             Text(
-              "PORTFOLIO",
+              localizations.portfolioLabel,
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
@@ -134,12 +136,12 @@ class _ProjectsSectionState extends State<ProjectsSection>
           ],
         ),
         const SizedBox(height: 16),
-        Text("Featured Projects", style: theme.textTheme.titleLarge),
+        Text(localizations.featuredProjects, style: theme.textTheme.titleLarge),
         const SizedBox(height: 16),
         SizedBox(
           width: 600,
           child: Text(
-            "Here are some of my recent projects. Each one was carefully crafted with attention to detail and user experience.",
+            localizations.projectsDescription,
             style: theme.textTheme.bodyLarge,
           ),
         ),
@@ -148,6 +150,25 @@ class _ProjectsSectionState extends State<ProjectsSection>
   }
 
   Widget _buildCategoryFilter(ThemeData theme) {
+    final localizations = AppLocalizations.of(context);
+
+    String getCategoryLabel(String category) {
+      switch (category) {
+        case 'All':
+          return localizations.categoryAll;
+        case 'Web':
+          return localizations.categoryWeb;
+        case 'Mobile':
+          return localizations.categoryMobile;
+        case 'UI/UX':
+          return localizations.categoryUIUX;
+        /* case 'Backend':
+          return localizations.categoryBackend; */
+        default:
+          return category;
+      }
+    }
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
@@ -161,7 +182,7 @@ class _ProjectsSectionState extends State<ProjectsSection>
                   curve: Curves.easeInOut,
                   child: ChoiceChip(
                     label: Text(
-                      category,
+                      getCategoryLabel(category),
                       style: TextStyle(
                         color:
                             isSelected
@@ -200,6 +221,7 @@ class _ProjectsSectionState extends State<ProjectsSection>
     bool isSmallScreen,
     double screenWidth,
   ) {
+    final localizations = AppLocalizations.of(context);
     // Filter projects based on selected category
     final filteredProjects =
         _selectedCategory == 'All'
@@ -221,7 +243,7 @@ class _ProjectsSectionState extends State<ProjectsSection>
         child: Padding(
           padding: const EdgeInsets.all(32.0),
           child: Text(
-            "No projects found in this category.",
+            localizations.noProjectsFound,
             style: theme.textTheme.titleMedium,
           ),
         ),
@@ -271,6 +293,46 @@ class _ProjectsSectionState extends State<ProjectsSection>
   }
 
   Widget _buildProjectCard(ThemeData theme, Map<String, dynamic> project) {
+    final localizations = AppLocalizations.of(context);
+
+    String getProjectTitle(String title) {
+      switch (title) {
+        case 'E-Commerce App':
+          return localizations.projectECommerceTitle;
+        case 'Portfolio Website':
+          return localizations.projectPortfolioTitle;
+        case 'Task Manager':
+          return localizations.projectTaskManagerTitle;
+        case 'API Service':
+          return localizations.projectAPIServiceTitle;
+        case 'Travel App':
+          return localizations.projectTravelAppTitle;
+        case 'Banking Dashboard':
+          return localizations.projectBankingTitle;
+        default:
+          return title;
+      }
+    }
+
+    String getProjectDescription(String description) {
+      switch (description) {
+        case 'A clean, modern e-commerce app with a seamless checkout process.':
+          return localizations.projectECommerceDesc;
+        case 'Responsive portfolio website built with Flutter web.':
+          return localizations.projectPortfolioDesc;
+        case 'A beautiful task management UI with intuitive interactions.':
+          return localizations.projectTaskManagerDesc;
+        case 'RESTful API developed for a client project with secure auth.':
+          return localizations.projectAPIServiceDesc;
+        case 'User-friendly travel booking app with personalized recommendations.':
+          return localizations.projectTravelAppDesc;
+        case 'Secure banking dashboard with real-time transaction monitoring.':
+          return localizations.projectBankingDesc;
+        default:
+          return description;
+      }
+    }
+
     return Card(
       elevation: 8,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -318,7 +380,7 @@ class _ProjectsSectionState extends State<ProjectsSection>
               ),
               const SizedBox(height: 20),
               Text(
-                project['title'] as String,
+                getProjectTitle(project['title'] as String),
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -326,7 +388,7 @@ class _ProjectsSectionState extends State<ProjectsSection>
               const SizedBox(height: 12),
               Expanded(
                 child: Text(
-                  project['description'] as String,
+                  getProjectDescription(project['description'] as String),
                   style: theme.textTheme.bodyMedium,
                 ),
               ),
@@ -342,7 +404,7 @@ class _ProjectsSectionState extends State<ProjectsSection>
                       size: 20,
                     ),
                     label: Text(
-                      'View Project',
+                      localizations.viewProject,
                       style: TextStyle(
                         color: theme.colorScheme.primary,
                         fontWeight: FontWeight.bold,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:math' show min; // min 함수 import 추가
+import 'dart:math' show min;
+import 'app_localizations.dart';
 
 class IntroSection extends StatelessWidget {
   const IntroSection({super.key});
@@ -9,6 +10,7 @@ class IntroSection extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final theme = Theme.of(context);
+        final localizations = AppLocalizations.of(context);
         final isSmallScreen = constraints.maxWidth < 800;
 
         return Container(
@@ -31,7 +33,10 @@ class IntroSection extends StatelessWidget {
                       children: [
                         if (isSmallScreen) _buildProfileImage(context),
                         const SizedBox(height: 24),
-                        Text("Hello, I'm", style: theme.textTheme.titleMedium),
+                        Text(
+                          localizations.introGreeting,
+                          style: theme.textTheme.titleMedium,
+                        ),
                         const SizedBox(height: 8),
                         ShaderMask(
                           shaderCallback:
@@ -42,7 +47,7 @@ class IntroSection extends StatelessWidget {
                                 ],
                               ).createShader(bounds),
                           child: Text(
-                            "John Developer",
+                            localizations.developerName,
                             style: theme.textTheme.titleLarge?.copyWith(
                               fontSize: isSmallScreen ? 32 : 48,
                               fontWeight: FontWeight.bold,
@@ -52,14 +57,14 @@ class IntroSection extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          "Full Stack Developer & UI/UX Designer",
+                          localizations.jobTitle,
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: theme.colorScheme.primary,
                           ),
                         ),
                         const SizedBox(height: 24),
                         Text(
-                          "I create beautiful, responsive web applications with modern technologies. My focus is on delivering exceptional user experiences through clean code and intuitive design.",
+                          localizations.introDescription,
                           style: theme.textTheme.bodyLarge?.copyWith(
                             height: 1.6,
                           ),
@@ -77,7 +82,7 @@ class IntroSection extends StatelessWidget {
                                 color: theme.colorScheme.onPrimary,
                               ),
                               label: Text(
-                                "Download CV",
+                                localizations.downloadCV,
                                 style: TextStyle(
                                   color: theme.colorScheme.onPrimary,
                                 ),
@@ -98,7 +103,7 @@ class IntroSection extends StatelessWidget {
                                 ),
                               ),
                               child: Text(
-                                "Contact Me",
+                                localizations.contactMe,
                                 style: TextStyle(
                                   color: theme.colorScheme.primary,
                                 ),
@@ -204,7 +209,7 @@ class IntroSection extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        "5+ Years Experience",
+                        AppLocalizations.of(context).yearsExperience,
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onPrimary,
                           fontWeight: FontWeight.bold,
