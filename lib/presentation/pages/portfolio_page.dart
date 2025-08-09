@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'intro_section.dart';
-import 'projects_section.dart';
-import 'contact_section.dart';
-import 'footer.dart';
-import 'portfolio_app_bar.dart';
-import 'scroll_to_top_button.dart';
+import 'package:portfolio_test2/presentation/sections/intro_section.dart';
+import 'package:portfolio_test2/presentation/sections/projects_section.dart';
+import 'package:portfolio_test2/presentation/sections/contact_section.dart';
+import 'package:portfolio_test2/presentation/sections/footer.dart';
+import 'package:portfolio_test2/presentation/app_bar/portfolio_app_bar.dart';
+import 'package:portfolio_test2/presentation/widgets/scroll_to_top_button.dart';
 
 class PortfolioPage extends StatefulWidget {
   final bool isDarkMode;
@@ -149,7 +149,6 @@ class _PortfolioPageState extends State<PortfolioPage> {
                   ),
                 ],
               ),
-              //if (!isSmallScreen)
               ScrollToTopButton(
                 scrollController: scrollController,
                 theme: theme,

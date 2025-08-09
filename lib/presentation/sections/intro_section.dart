@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' show min;
-import 'app_localizations.dart';
+import 'package:portfolio_test2/core/app_localizations.dart';
 
 class IntroSection extends StatelessWidget {
   const IntroSection({super.key});
@@ -47,7 +47,6 @@ class IntroSection extends StatelessWidget {
                                 ],
                               ).createShader(bounds),
                           child: Row(
-
                             children: [
                               Text(
                                 localizations.developerName,
@@ -57,7 +56,8 @@ class IntroSection extends StatelessWidget {
                                   color: Colors.white,
                                 ),
                               ),
-                              if (localizations.locale.languageCode == "ko")...[
+                              if (localizations.locale.languageCode ==
+                                  "ko") ...[
                                 const SizedBox(width: 8),
                                 Text(
                                   localizations.developerNameSuffix,
@@ -85,10 +85,9 @@ class IntroSection extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 32),
-                        // Row 위젯을 Wrap으로 변경하여 화면이 작아질 때 자동으로 줄바꿈되도록 함
                         Wrap(
-                          spacing: 16.0, // 버튼 사이 가로 간격
-                          runSpacing: 12.0, // 줄 사이 세로 간격
+                          spacing: 16.0,
+                          runSpacing: 12.0,
                           children: [
                             ElevatedButton.icon(
                               onPressed: () {},
@@ -145,12 +144,9 @@ class IntroSection extends StatelessWidget {
       builder: (context, constraints) {
         final isSmallScreen = constraints.maxWidth < 800;
 
-        // width 속성과 constraints가 충돌하지 않도록 수정
         return Container(
-          // width 속성 제거 (constraints와 충돌)
           constraints: BoxConstraints(
             maxWidth: 450,
-            // minWidth가 maxWidth보다 크지 않도록 보장
             minWidth: min(isSmallScreen ? constraints.maxWidth - 40 : 350, 450),
           ),
           child: Stack(

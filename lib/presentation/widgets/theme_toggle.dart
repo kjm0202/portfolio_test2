@@ -81,14 +81,6 @@ class ThemeToggle extends StatelessWidget {
                 fontSize: 14,
               ),
             ),
-            /* if (themeMode == ThemeMode.system) ...[
-              const SizedBox(width: 4),
-              Icon(
-                isDarkMode ? Icons.dark_mode : Icons.light_mode,
-                size: 16,
-                color: _getButtonColor(context).withValues(alpha: 0.7),
-              ),
-            ], */
             const SizedBox(width: 4),
             Icon(
               Icons.keyboard_arrow_down,
@@ -152,17 +144,6 @@ class ThemeToggle extends StatelessWidget {
                 ),
               ),
             ),
-            /* if (mode == ThemeMode.system) ...[
-              const SizedBox(width: 8),
-              Icon(
-                isDarkMode ? Icons.dark_mode : Icons.light_mode,
-                size: 16,
-                color:
-                    isSelected
-                        ? itemColor.withValues(alpha: 0.7)
-                        : colorScheme.onSurface.withValues(alpha: 0.5),
-              ),
-            ], */
             if (isSelected) ...[
               const SizedBox(width: 8),
               Icon(Icons.check, size: 18, color: itemColor),

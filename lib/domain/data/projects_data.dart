@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/project.dart';
+import 'package:portfolio_test2/domain/models/project.dart';
 
 /// 프로젝트 ID 상수들 - 데이터와 함께 관리
 class ProjectIds {
@@ -66,9 +66,10 @@ class ProjectsData {
   // 카테고리별로 미리 그룹화된 맵 (성능 최적화)
   static final Map<ProjectCategory, List<Project>> _projectsByCategory = {
     for (var category in ProjectCategory.values)
-      category: category == ProjectCategory.all 
-        ? projects 
-        : projects.where((p) => p.category == category).toList(),
+      category:
+          category == ProjectCategory.all
+              ? projects
+              : projects.where((p) => p.category == category).toList(),
   };
 
   static List<Project> getProjectsByCategory(ProjectCategory category) {

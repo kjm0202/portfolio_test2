@@ -19,7 +19,8 @@ class AppLocalizations {
   ];
 
   // App Title
-  String get appTitle => locale.languageCode == 'ko' ? '김종민의 포트폴리오' : 'KJM\'s Portfolio';
+  String get appTitle =>
+      locale.languageCode == 'ko' ? '김종민의 포트폴리오' : 'KJM\'s Portfolio';
 
   // Navigation
   String get navHome => locale.languageCode == 'ko' ? '홈' : 'Home';
@@ -36,9 +37,7 @@ class AppLocalizations {
   String get introGreeting =>
       locale.languageCode == 'ko' ? '안녕하세요, 저는' : "Hello, I'm";
   String get jobTitle =>
-      locale.languageCode == 'ko'
-          ? 'Flutter 개발자'
-          : 'Flutter Developer';
+      locale.languageCode == 'ko' ? 'Flutter 개발자' : 'Flutter Developer';
   String get introDescription =>
       locale.languageCode == 'ko'
           ? '\'사용자가 계속 쓰고 싶은\' 애플리케이션 제작을 목표로 합니다.\n깔끔한 코드와 직관적인 디자인을 통해 뛰어난 사용자 경험을 제공하는 것에 중점을 둡니다.'
@@ -75,37 +74,22 @@ class AppLocalizations {
   };
 
   String getCategoryLabel(String categoryKey) {
-    return _categoryLabels[categoryKey]?[locale.languageCode] ?? 
-           _categoryLabels[categoryKey]?['en'] ?? 
-           categoryKey;
+    return _categoryLabels[categoryKey]?[locale.languageCode] ??
+        _categoryLabels[categoryKey]?['en'] ??
+        categoryKey;
   }
 
   // Project Titles and Descriptions - 자동화된 매핑
   static const Map<String, Map<String, String>> _projectTitles = {
-    'dreamhue': {
-      'en': 'DreamHue',
-      'ko': 'DreamHue',
-    },
-    'portfolio': {
-      'en': 'Portfolio Website',
-      'ko': '포트폴리오 웹사이트',
-    },
-    'connectedFarm': {
-      'en': 'CONNECTED FARM',
-      'ko': '커넥티드 팜',
-    },
-    'connect': {
-      'en': 'CONNECT',
-      'ko': '커넥트',
-    },
+    'dreamhue': {'en': 'DreamHue', 'ko': 'DreamHue'},
+    'portfolio': {'en': 'Portfolio Website', 'ko': '포트폴리오 웹사이트'},
+    'connectedFarm': {'en': 'CONNECTED FARM', 'ko': '커넥티드 팜'},
+    'connect': {'en': 'CONNECT', 'ko': '커넥트'},
     'sims': {
       'en': 'SIMS (Smart Inventory Management System)',
       'ko': 'SIMS (스마트 재고 관리 시스템)',
     },
-    'gachonNoti': {
-      'en': 'Gachon Noti',
-      'ko': '가천 알림이',
-    },
+    'gachonNoti': {'en': 'Gachon Noti', 'ko': '가천 알림이'},
   };
 
   static const Map<String, Map<String, String>> _projectDescriptions = {
@@ -136,15 +120,15 @@ class AppLocalizations {
   };
 
   String getProjectTitle(String projectKey) {
-    return _projectTitles[projectKey]?[locale.languageCode] ?? 
-           _projectTitles[projectKey]?['en'] ?? 
-           projectKey;
+    return _projectTitles[projectKey]?[locale.languageCode] ??
+        _projectTitles[projectKey]?['en'] ??
+        projectKey;
   }
 
   String getProjectDescription(String projectKey) {
-    return _projectDescriptions[projectKey]?[locale.languageCode] ?? 
-           _projectDescriptions[projectKey]?['en'] ?? 
-           projectKey;
+    return _projectDescriptions[projectKey]?[locale.languageCode] ??
+        _projectDescriptions[projectKey]?['en'] ??
+        projectKey;
   }
 
   // Contact Section

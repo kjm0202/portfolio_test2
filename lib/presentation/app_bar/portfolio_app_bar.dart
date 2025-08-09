@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'theme_toggle.dart';
-import 'language_toggle.dart';
-import 'settings_menu.dart';
-import 'navigation_items.dart';
-import 'app_localizations.dart';
+import 'package:portfolio_test2/presentation/widgets/theme_toggle.dart';
+import 'package:portfolio_test2/presentation/widgets/language_toggle.dart';
+import 'package:portfolio_test2/presentation/widgets/settings_menu.dart';
+import 'package:portfolio_test2/presentation/widgets/navigation_items.dart';
+import 'package:portfolio_test2/core/app_localizations.dart';
 
 class PortfolioAppBar extends StatelessWidget {
   final bool isScrolled;
@@ -71,10 +71,7 @@ class PortfolioAppBar extends StatelessWidget {
   List<Widget> _buildActions() {
     return [
       if (!isSmallScreen) ...[
-        NavigationItems(
-          theme: theme,
-          onItemTapped: onNavigationItemTapped,
-        ),
+        NavigationItems(theme: theme, onItemTapped: onNavigationItemTapped),
         const SizedBox(width: 16),
       ],
       if (isSmallScreen)

@@ -28,10 +28,7 @@ class ScrollToTopButton extends StatelessWidget {
           }
         },
         backgroundColor: theme.colorScheme.primary,
-        child: Icon(
-          Icons.arrow_upward,
-          color: theme.colorScheme.onPrimary,
-        ),
+        child: Icon(Icons.arrow_upward, color: theme.colorScheme.onPrimary),
       ),
     );
   }

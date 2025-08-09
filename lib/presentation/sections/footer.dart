@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'app_localizations.dart';
+import 'package:portfolio_test2/core/app_localizations.dart';
 
 class Footer extends StatelessWidget {
   const Footer({super.key});

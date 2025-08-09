@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'app_localizations.dart';
+import 'package:portfolio_test2/core/app_localizations.dart';
+import 'package:portfolio_test2/presentation/sections/widgets/section_header.dart';
 
 class ContactSection extends StatefulWidget {
   const ContactSection({super.key});
@@ -70,42 +71,10 @@ class _ContactSectionState extends State<ContactSection> {
   Widget _buildSectionHeader(ThemeData theme) {
     if (!mounted) return const SizedBox.shrink();
     final localizations = AppLocalizations.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Container(
-              height: 4,
-              width: 40,
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary,
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              localizations.getInTouch,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.primary,
-                letterSpacing: 2.0,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Text(localizations.contactTitle, style: theme.textTheme.titleLarge),
-        const SizedBox(height: 16),
-        SizedBox(
-          width: 600,
-          child: Text(
-            localizations.contactDescription,
-            style: theme.textTheme.bodyLarge,
-          ),
-        ),
-      ],
+    return SectionHeader(
+      label: localizations.getInTouch,
+      title: localizations.contactTitle,
+      description: localizations.contactDescription,
     );
   }
 
@@ -179,7 +148,6 @@ class _ContactSectionState extends State<ContactSection> {
               child: ElevatedButton.icon(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    // Form submission logic would go here
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
