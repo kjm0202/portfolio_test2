@@ -38,124 +38,124 @@ class SettingsMenu extends StatelessWidget {
     }
   }
 
-  String _getLanguageLabel(Locale locale) {
-    return locale.languageCode == 'ko' ? '한국어' : 'English';
-  }
-
-  String _getLanguageCode(Locale locale) {
-    return locale.languageCode.toUpperCase();
-  }
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return PopupMenuButton<String>(
-      offset: const Offset(0, 40),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: colorScheme.primary.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: colorScheme.primary.withValues(alpha: 0.3),
-            width: 1,
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(20),
+      clipBehavior: Clip.antiAlias,
+      child: PopupMenuButton<String>(
+        padding: EdgeInsets.zero,
+        offset: const Offset(0, 40),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Ink(
+          decoration: BoxDecoration(
+            color: colorScheme.primary.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: colorScheme.primary.withValues(alpha: 0.3),
+              width: 1,
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.settings, size: 18, color: colorScheme.primary),
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.keyboard_arrow_down,
+                  size: 16,
+                  color: colorScheme.primary.withValues(alpha: 0.7),
+                ),
+              ],
+            ),
           ),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.settings, size: 18, color: colorScheme.primary),
-            const SizedBox(width: 4),
-            Icon(
-              Icons.keyboard_arrow_down,
-              size: 16,
-              color: colorScheme.primary.withValues(alpha: 0.7),
-            ),
-          ],
-        ),
-      ),
-      itemBuilder:
-          (BuildContext context) => [
-            // 언어 섹션
-            PopupMenuItem<String>(
-              enabled: false,
-              child: Text(
-                'Language',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onSurface.withValues(alpha: 0.7),
-                  fontSize: 12,
+        itemBuilder:
+            (BuildContext context) => [
+              // 언어 섹션
+              PopupMenuItem<String>(
+                enabled: false,
+                child: Text(
+                  'Language',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.onSurface.withValues(alpha: 0.7),
+                    fontSize: 12,
+                  ),
                 ),
               ),
-            ),
-            PopupMenuItem<String>(
-              value: 'lang_en',
-              child: _buildLanguageItem(
-                context,
-                const Locale('en', ''),
-                'English',
-                'EN',
-              ),
-            ),
-            PopupMenuItem<String>(
-              value: 'lang_ko',
-              child: _buildLanguageItem(
-                context,
-                const Locale('ko', ''),
-                '한국어',
-                'KO',
-              ),
-            ),
-            const PopupMenuDivider(),
-            // 테마 섹션
-            PopupMenuItem<String>(
-              enabled: false,
-              child: Text(
-                'Theme',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onSurface.withValues(alpha: 0.7),
-                  fontSize: 12,
+              PopupMenuItem<String>(
+                value: 'lang_en',
+                child: _buildLanguageItem(
+                  context,
+                  const Locale('en', ''),
+                  'English',
+                  'EN',
                 ),
               ),
-            ),
-            PopupMenuItem<String>(
-              value: 'theme_system',
-              child: _buildThemeItem(context, ThemeMode.system),
-            ),
-            PopupMenuItem<String>(
-              value: 'theme_light',
-              child: _buildThemeItem(context, ThemeMode.light),
-            ),
-            PopupMenuItem<String>(
-              value: 'theme_dark',
-              child: _buildThemeItem(context, ThemeMode.dark),
-            ),
-          ],
-      onSelected: (String value) {
-        if (value.startsWith('lang_')) {
-          final langCode = value.split('_')[1];
-          onLocaleChanged(Locale(langCode, ''));
-        } else if (value.startsWith('theme_')) {
-          final themeString = value.split('_')[1];
-          ThemeMode newTheme;
-          switch (themeString) {
-            case 'light':
-              newTheme = ThemeMode.light;
-              break;
-            case 'dark':
-              newTheme = ThemeMode.dark;
-              break;
-            case 'system':
-            default:
-              newTheme = ThemeMode.system;
-              break;
+              PopupMenuItem<String>(
+                value: 'lang_ko',
+                child: _buildLanguageItem(
+                  context,
+                  const Locale('ko', ''),
+                  '한국어',
+                  'KO',
+                ),
+              ),
+              const PopupMenuDivider(),
+              // 테마 섹션
+              PopupMenuItem<String>(
+                enabled: false,
+                child: Text(
+                  'Theme',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.onSurface.withValues(alpha: 0.7),
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+              PopupMenuItem<String>(
+                value: 'theme_system',
+                child: _buildThemeItem(context, ThemeMode.system),
+              ),
+              PopupMenuItem<String>(
+                value: 'theme_light',
+                child: _buildThemeItem(context, ThemeMode.light),
+              ),
+              PopupMenuItem<String>(
+                value: 'theme_dark',
+                child: _buildThemeItem(context, ThemeMode.dark),
+              ),
+            ],
+        onSelected: (String value) {
+          if (value.startsWith('lang_')) {
+            final langCode = value.split('_')[1];
+            onLocaleChanged(Locale(langCode, ''));
+          } else if (value.startsWith('theme_')) {
+            final themeString = value.split('_')[1];
+            ThemeMode newTheme;
+            switch (themeString) {
+              case 'light':
+                newTheme = ThemeMode.light;
+                break;
+              case 'dark':
+                newTheme = ThemeMode.dark;
+                break;
+              case 'system':
+              default:
+                newTheme = ThemeMode.system;
+                break;
+            }
+            onThemeChanged(newTheme);
           }
-          onThemeChanged(newTheme);
-        }
-      },
+        },
+      ),
     );
   }
 

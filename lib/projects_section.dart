@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math' show min;
 import 'app_localizations.dart';
+import 'models/project.dart';
+import 'services/project_service.dart';
 
 class ProjectsSection extends StatefulWidget {
   const ProjectsSection({super.key});
@@ -12,58 +14,7 @@ class ProjectsSection extends StatefulWidget {
 class _ProjectsSectionState extends State<ProjectsSection>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  static const List<String> _filterCategories = [
-    'All',
-    'Web',
-    'Mobile',
-    'UI/UX',
-    // 'Backend',
-  ];
-  String _selectedCategory = 'All';
-
-  static const List<Map<String, dynamic>> _projects = [
-    {
-      'title': 'E-Commerce App',
-      'category': 'Mobile',
-      'icon': Icons.shopping_bag_outlined,
-      'description':
-          'A clean, modern e-commerce app with a seamless checkout process.',
-    },
-    {
-      'title': 'Portfolio Website',
-      'category': 'Web',
-      'icon': Icons.web_outlined,
-      'description': 'Responsive portfolio website built with Flutter web.',
-    },
-    {
-      'title': 'Task Manager',
-      'category': 'UI/UX',
-      'icon': Icons.check_circle_outline,
-      'description':
-          'A beautiful task management UI with intuitive interactions.',
-    },
-    {
-      'title': 'API Service',
-      'category': 'Backend',
-      'icon': Icons.settings_ethernet_outlined,
-      'description':
-          'RESTful API developed for a client project with secure auth.',
-    },
-    {
-      'title': 'Travel App',
-      'category': 'Mobile',
-      'icon': Icons.flight_outlined,
-      'description':
-          'User-friendly travel booking app with personalized recommendations.',
-    },
-    {
-      'title': 'Banking Dashboard',
-      'category': 'Web',
-      'icon': Icons.account_balance_outlined,
-      'description':
-          'Secure banking dashboard with real-time transaction monitoring.',
-    },
-  ];
+  ProjectCategory _selectedCategory = ProjectCategory.all;
 
   @override
   void initState() {
@@ -163,73 +114,55 @@ class _ProjectsSectionState extends State<ProjectsSection>
   Widget _buildCategoryFilter(ThemeData theme) {
     if (!mounted) return const SizedBox.shrink();
     final localizations = AppLocalizations.of(context);
-
-    String getCategoryLabel(String category) {
-      switch (category) {
-        case 'All':
-          return localizations.categoryAll;
-        case 'Web':
-          return localizations.categoryWeb;
-        case 'Mobile':
-          return localizations.categoryMobile;
-        case 'UI/UX':
-          return localizations.categoryUIUX;
-        /* case 'Backend':
-          return localizations.categoryBackend; */
-        default:
-          return category;
-      }
-    }
+    final categories = ProjectService.getFilterCategories();
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children:
-            _filterCategories.map((category) {
-              final isSelected = _selectedCategory == category;
-              return Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                  child: ChoiceChip(
-                    label: Text(
-                      getCategoryLabel(category),
-                      style: TextStyle(
-                        color:
-                            isSelected
-                                ? theme.colorScheme.onPrimary
-                                : theme.colorScheme.primary,
-                        fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.normal,
-                      ),
-                    ),
-                    selected: isSelected,
-                    selectedColor: theme.colorScheme.primary,
-                    backgroundColor: theme.colorScheme.surface,
-                    onSelected: (selected) {
-                      if (selected && mounted) {
-                        setState(() {
-                          _selectedCategory = category;
-                        });
-                        if (mounted) {
-                          try {
-                            _controller.reset();
-                            _controller.forward();
-                          } catch (e) {
-                            // Controller might be disposed
-                          }
-                        }
-                      }
-                    },
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
+        children: categories.map((category) {
+          final isSelected = _selectedCategory == category;
+          return Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              child: ChoiceChip(
+                label: Text(
+                  ProjectService.getCategoryLabel(category, localizations),
+                  style: TextStyle(
+                    color: isSelected
+                        ? theme.colorScheme.onPrimary
+                        : theme.colorScheme.primary,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
-              );
-            }).toList(),
+                selected: isSelected,
+                selectedColor: theme.colorScheme.primary,
+                backgroundColor: theme.colorScheme.surface,
+                onSelected: (selected) {
+                  if (selected && mounted) {
+                    setState(() {
+                      _selectedCategory = category;
+                    });
+                    if (mounted) {
+                      try {
+                        _controller.reset();
+                        _controller.forward();
+                      } catch (e) {
+                        // Controller might be disposed
+                      }
+                    }
+                  }
+                },
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -242,12 +175,7 @@ class _ProjectsSectionState extends State<ProjectsSection>
     if (!mounted) return const SizedBox.shrink();
     final localizations = AppLocalizations.of(context);
     // Filter projects based on selected category
-    final filteredProjects =
-        _selectedCategory == 'All'
-            ? _projects
-            : _projects
-                .where((p) => p['category'] == _selectedCategory)
-                .toList();
+    final filteredProjects = ProjectService.getFilteredProjects(_selectedCategory);
 
     // Calculate card width based on screen width
     double cardWidth;
@@ -315,47 +243,9 @@ class _ProjectsSectionState extends State<ProjectsSection>
     );
   }
 
-  Widget _buildProjectCard(ThemeData theme, Map<String, dynamic> project) {
+  Widget _buildProjectCard(ThemeData theme, Project project) {
     if (!mounted) return const SizedBox.shrink();
     final localizations = AppLocalizations.of(context);
-
-    String getProjectTitle(String title) {
-      switch (title) {
-        case 'E-Commerce App':
-          return localizations.projectECommerceTitle;
-        case 'Portfolio Website':
-          return localizations.projectPortfolioTitle;
-        case 'Task Manager':
-          return localizations.projectTaskManagerTitle;
-        case 'API Service':
-          return localizations.projectAPIServiceTitle;
-        case 'Travel App':
-          return localizations.projectTravelAppTitle;
-        case 'Banking Dashboard':
-          return localizations.projectBankingTitle;
-        default:
-          return title;
-      }
-    }
-
-    String getProjectDescription(String description) {
-      switch (description) {
-        case 'A clean, modern e-commerce app with a seamless checkout process.':
-          return localizations.projectECommerceDesc;
-        case 'Responsive portfolio website built with Flutter web.':
-          return localizations.projectPortfolioDesc;
-        case 'A beautiful task management UI with intuitive interactions.':
-          return localizations.projectTaskManagerDesc;
-        case 'RESTful API developed for a client project with secure auth.':
-          return localizations.projectAPIServiceDesc;
-        case 'User-friendly travel booking app with personalized recommendations.':
-          return localizations.projectTravelAppDesc;
-        case 'Secure banking dashboard with real-time transaction monitoring.':
-          return localizations.projectBankingDesc;
-        default:
-          return description;
-      }
-    }
 
     return Card(
       elevation: 8,
@@ -378,14 +268,14 @@ class _ProjectsSectionState extends State<ProjectsSection>
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
-                      project['icon'] as IconData,
+                      project.icon,
                       color: theme.colorScheme.primary,
                       size: 28,
                     ),
                   ),
                   Chip(
                     label: Text(
-                      project['category'] as String,
+                      ProjectService.getCategoryLabel(project.category, localizations),
                       style: TextStyle(
                         color: theme.colorScheme.primary,
                         fontWeight: FontWeight.bold,
@@ -404,14 +294,14 @@ class _ProjectsSectionState extends State<ProjectsSection>
               ),
               const SizedBox(height: 20),
               Text(
-                getProjectTitle(project['title'] as String),
+                ProjectService.getLocalizedProjectTitle(project, localizations),
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 12),
               Text(
-                getProjectDescription(project['description'] as String),
+                ProjectService.getLocalizedProjectDescription(project, localizations),
                 style: theme.textTheme.bodyMedium,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,

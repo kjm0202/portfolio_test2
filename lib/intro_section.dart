@@ -46,13 +46,28 @@ class IntroSection extends StatelessWidget {
                                   theme.colorScheme.secondary,
                                 ],
                               ).createShader(bounds),
-                          child: Text(
-                            localizations.developerName,
-                            style: theme.textTheme.titleLarge?.copyWith(
-                              fontSize: isSmallScreen ? 32 : 48,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
+                          child: Row(
+
+                            children: [
+                              Text(
+                                localizations.developerName,
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  fontSize: isSmallScreen ? 32 : 48,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              if (localizations.locale.languageCode == "ko")...[
+                                const SizedBox(width: 8),
+                                Text(
+                                  localizations.developerNameSuffix,
+                                  style: theme.textTheme.titleLarge?.copyWith(
+                                    fontSize: isSmallScreen ? 32 : 48,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ],
                           ),
                         ),
                         const SizedBox(height: 12),

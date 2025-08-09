@@ -69,7 +69,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   /// 시스템 다크모드 설정을 확인하여 반환
-  bool _getSystemDarkMode() {
+  /* bool _getSystemDarkMode() {
     final brightness = ui.PlatformDispatcher.instance.platformBrightness;
     final isDarkMode = brightness == Brightness.dark;
 
@@ -78,7 +78,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     debugPrint('System dark mode: $isDarkMode');
 
     return isDarkMode;
-  }
+  } */
 
   Future<void> _loadPreferences() async {
     final prefs = await SharedPreferences.getInstance();
@@ -139,8 +139,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         themeString = 'dark';
         break;
       case ThemeMode.system:
-      default:
-        themeString = 'system';
+      themeString = 'system';
         break;
     }
     await prefs.setString(_themeKey, themeString);
@@ -181,8 +180,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         isDarkMode = false;
         break;
       case ThemeMode.system:
-      default:
-        isDarkMode =
+      isDarkMode =
             MediaQuery.platformBrightnessOf(context) == Brightness.dark;
         break;
     }

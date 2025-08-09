@@ -10,9 +10,9 @@ class Footer extends StatelessWidget {
       builder: (context, constraints) {
         final theme = Theme.of(context);
 
-        final isSmallScreen = constraints.maxWidth < 800;
+        final isSmallScreen = constraints.maxWidth < 900;
         final isMediumScreen =
-            constraints.maxWidth < 1000 && constraints.maxWidth >= 800;
+            constraints.maxWidth < 1000 && constraints.maxWidth >= 900;
 
         return Container(
           padding: EdgeInsets.symmetric(
