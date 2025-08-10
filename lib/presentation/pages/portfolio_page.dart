@@ -5,6 +5,7 @@ import 'package:portfolio_test2/presentation/sections/contact_section.dart';
 import 'package:portfolio_test2/presentation/sections/footer.dart';
 import 'package:portfolio_test2/presentation/app_bar/portfolio_app_bar.dart';
 import 'package:portfolio_test2/presentation/widgets/scroll_to_top_button.dart';
+import 'package:portfolio_test2/presentation/widgets/bokeh_background.dart';
 
 class PortfolioPage extends StatefulWidget {
   final bool isDarkMode;
@@ -103,6 +104,8 @@ class _PortfolioPageState extends State<PortfolioPage> {
         return Scaffold(
           body: Stack(
             children: [
+              // 움직이는 보케 배경
+              const Positioned.fill(child: BokehBackground()),
               CustomScrollView(
                 controller: scrollController,
                 slivers: [
