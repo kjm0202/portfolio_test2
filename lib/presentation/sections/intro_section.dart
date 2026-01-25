@@ -11,7 +11,7 @@ class IntroSection extends StatelessWidget {
       builder: (context, constraints) {
         final theme = Theme.of(context);
         final localizations = AppLocalizations.of(context);
-        final isSmallScreen = constraints.maxWidth < 800;
+        final isSmallScreen = constraints.maxWidth < 1200;
 
         return Container(
           padding: EdgeInsets.symmetric(
@@ -19,7 +19,11 @@ class IntroSection extends StatelessWidget {
             vertical: 60,
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            // 모바일/태블릿에서는 중앙 정렬, 데스크톱에서는 왼쪽 정렬
+            crossAxisAlignment:
+                isSmallScreen
+                    ? CrossAxisAlignment.center
+                    : CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Row(
@@ -29,13 +33,19 @@ class IntroSection extends StatelessWidget {
                   if (!isSmallScreen) _buildProfileImage(context),
                   Flexible(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      // 모바일/태블릿에서는 중앙 정렬
+                      crossAxisAlignment:
+                          isSmallScreen
+                              ? CrossAxisAlignment.center
+                              : CrossAxisAlignment.start,
                       children: [
                         if (isSmallScreen) _buildProfileImage(context),
                         const SizedBox(height: 24),
                         Text(
                           localizations.introGreeting,
                           style: theme.textTheme.titleMedium,
+                          textAlign:
+                              isSmallScreen ? TextAlign.center : TextAlign.start,
                         ),
                         const SizedBox(height: 8),
                         ShaderMask(
@@ -47,6 +57,14 @@ class IntroSection extends StatelessWidget {
                                 ],
                               ).createShader(bounds),
                           child: Row(
+                            mainAxisSize:
+                                isSmallScreen
+                                    ? MainAxisSize.min
+                                    : MainAxisSize.max,
+                            mainAxisAlignment:
+                                isSmallScreen
+                                    ? MainAxisAlignment.center
+                                    : MainAxisAlignment.start,
                             children: [
                               Text(
                                 localizations.developerName,
@@ -76,6 +94,8 @@ class IntroSection extends StatelessWidget {
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: theme.colorScheme.primary,
                           ),
+                          textAlign:
+                              isSmallScreen ? TextAlign.center : TextAlign.start,
                         ),
                         const SizedBox(height: 24),
                         Text(
@@ -83,11 +103,17 @@ class IntroSection extends StatelessWidget {
                           style: theme.textTheme.bodyLarge?.copyWith(
                             height: 1.6,
                           ),
+                          textAlign:
+                              isSmallScreen ? TextAlign.center : TextAlign.start,
                         ),
                         const SizedBox(height: 32),
                         Wrap(
                           spacing: 16.0,
                           runSpacing: 12.0,
+                          alignment:
+                              isSmallScreen
+                                  ? WrapAlignment.center
+                                  : WrapAlignment.start,
                           children: [
                             ElevatedButton.icon(
                               onPressed: () {},
@@ -126,7 +152,7 @@ class IntroSection extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 24),
-                        _buildSocialLinks(context),
+                        _buildSocialLinks(context, isSmallScreen),
                       ],
                     ),
                   ),
@@ -142,7 +168,7 @@ class IntroSection extends StatelessWidget {
   Widget _buildProfileImage(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final isSmallScreen = constraints.maxWidth < 800;
+        final isSmallScreen = constraints.maxWidth < 1200;
 
         return Container(
           constraints: BoxConstraints(
@@ -237,7 +263,7 @@ class IntroSection extends StatelessWidget {
     );
   }
 
-  Widget _buildSocialLinks(BuildContext context) {
+  Widget _buildSocialLinks(BuildContext context, bool isSmallScreen) {
     final socialIcons = [
       Icons.mail_outline_rounded,
       Icons.facebook_outlined,
@@ -247,6 +273,8 @@ class IntroSection extends StatelessWidget {
     ];
 
     return Row(
+      mainAxisAlignment:
+          isSmallScreen ? MainAxisAlignment.center : MainAxisAlignment.start,
       children:
           socialIcons.map((icon) {
             return Padding(
