@@ -108,11 +108,11 @@ class _BokehBackgroundState extends State<BokehBackground>
             colorScheme.primary,
             colorScheme.secondary,
             colorScheme.tertiary,
-            colorScheme.primary.withOpacity(0.6),
-            colorScheme.secondary.withOpacity(0.6),
+            colorScheme.primary.withValues(alpha: 0.6),
+            colorScheme.secondary.withValues(alpha: 0.6),
           ];
           final base = palette[_random.nextInt(palette.length)];
-          final color = base.withOpacity(0.18 + _random.nextDouble() * 0.22);
+          final color = base.withValues(alpha: 0.18 + _random.nextDouble() * 0.22);
 
           final vx = _randomSpeed() * (_random.nextBool() ? 1 : -1);
           final vy = _randomSpeed() * (_random.nextBool() ? 1 : -1);
@@ -171,11 +171,11 @@ class _BokehBackgroundState extends State<BokehBackground>
           colorScheme.primary,
           colorScheme.secondary,
           colorScheme.tertiary,
-          colorScheme.primary.withOpacity(0.6),
-          colorScheme.secondary.withOpacity(0.6),
+          colorScheme.primary.withValues(alpha: 0.6),
+          colorScheme.secondary.withValues(alpha: 0.6),
         ];
         final base = palette[_random.nextInt(palette.length)];
-        final color = base.withOpacity(0.14 + _random.nextDouble() * 0.2);
+        final color = base.withValues(alpha: 0.14 + _random.nextDouble() * 0.2);
         final vx = _randomSpeed() * (_random.nextBool() ? 1 : -1);
         final vy = _randomSpeed() * (_random.nextBool() ? 1 : -1);
         final maxX0 = (size.width - radius * 2).clamp(0.0, size.width);
@@ -270,8 +270,8 @@ class _BokehBackgroundState extends State<BokehBackground>
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  theme.colorScheme.surface.withOpacity(0.95),
-                  theme.colorScheme.surface.withOpacity(0.98),
+                  theme.colorScheme.surface.withValues(alpha: 0.95),
+                  theme.colorScheme.surface.withValues(alpha: 0.98),
                 ],
               ),
             ),
