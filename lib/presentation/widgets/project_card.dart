@@ -32,11 +32,11 @@ class ProjectCard extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             // 다크모드: 어두운 반투명, 라이트모드: 밝은 반투명
+            // borderRadius 제거 - ClipRRect가 이미 클리핑하므로 중복 적용 시 공백 발생
             color:
                 isDark
-                    ? Colors.white.withValues(alpha: 0.08)
-                    : Colors.white.withValues(alpha: 0.7),
-            borderRadius: BorderRadius.circular(16),
+                    ? Colors.white.withValues(alpha: 0.06)
+                    : Colors.white.withValues(alpha: 0.6),
             border: Border.all(
               color:
                   isDark
@@ -44,15 +44,6 @@ class ProjectCard extends StatelessWidget {
                       : theme.colorScheme.primary.withValues(alpha: 0.1),
               width: 1,
             ),
-            boxShadow: [
-              // 오른쪽 및 하단 그림자
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.12),
-                blurRadius: 12,
-                spreadRadius: 0,
-                offset: const Offset(4, 4),
-              ),
-            ],
           ),
           child: Material(
             color: Colors.transparent,

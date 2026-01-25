@@ -1,10 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 class BokehBackground extends StatefulWidget {
   final int bubbleCount;
-  final Duration duration;
   final double maxBlurSigma;
   final double minRadius;
   final double maxRadius;
@@ -13,7 +13,6 @@ class BokehBackground extends StatefulWidget {
   const BokehBackground({
     super.key,
     this.bubbleCount = 12,
-    this.duration = const Duration(milliseconds: 1000000),
     this.maxBlurSigma = 22,
     this.minRadius = 24,
     this.maxRadius = 96,
@@ -47,28 +46,35 @@ class _BokehCircle {
 
 class _BokehBackgroundState extends State<BokehBackground>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
-  late final AnimationController _controller;
+  late final Ticker _ticker;
   final List<_BokehCircle> _circles = [];
   Size _lastSize = Size.zero;
   late final Random _random;
-  int _lastUpdateMs = 0;
+  
+  // Stopwatch로 시간 측정 (DateTime.now() 대신 - GC 압력 감소)
+  final Stopwatch _stopwatch = Stopwatch();
+  Duration _lastElapsed = Duration.zero;
+  
+  // CustomPainter 갱신을 위한 ValueNotifier
+  final ValueNotifier<int> _frameNotifier = ValueNotifier(0);
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _random = Random();
-    _controller =
-        AnimationController(vsync: this, duration: widget.duration)
-          ..addListener(_tick)
-          ..repeat();
+    _stopwatch.start();
+    
+    // Ticker 사용 (AnimationController보다 가벼움)
+    _ticker = createTicker(_onTick)..start();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _controller.removeListener(_tick);
-    _controller.dispose();
+    _ticker.dispose();
+    _stopwatch.stop();
+    _frameNotifier.dispose();
     super.dispose();
   }
 
@@ -77,24 +83,24 @@ class _BokehBackgroundState extends State<BokehBackground>
     if (!mounted) return;
     switch (state) {
       case AppLifecycleState.resumed:
-        _lastUpdateMs = DateTime.now().millisecondsSinceEpoch;
-        if (!_controller.isAnimating) {
-          _controller.repeat();
+        _lastElapsed = _stopwatch.elapsed;
+        if (!_ticker.isActive) {
+          _ticker.start();
         }
         break;
       case AppLifecycleState.inactive:
       case AppLifecycleState.paused:
       case AppLifecycleState.hidden:
       case AppLifecycleState.detached:
-        if (_controller.isAnimating) {
-          _controller.stop();
+        if (_ticker.isActive) {
+          _ticker.stop();
         }
         break;
     }
   }
 
   void _ensureInit(Size size, ColorScheme colorScheme) {
-    // 최초 생성: 현재 화면 크기 기준으로 한 번만 생성
+    // 최초 생성
     if (_circles.isEmpty) {
       final cfg0 = _resolveConfig(size);
       _circles.addAll(
@@ -136,7 +142,7 @@ class _BokehBackgroundState extends State<BokehBackground>
     // 사이즈가 동일하면 갱신 불필요
     if (_lastSize == size) return;
 
-    // 사이즈 변경: 기존 원들을 유지하면서 스케일/보정 → 끊김 최소화
+    // 사이즈 변경 처리
     final cfg = _resolveConfig(size);
     final sx = _lastSize.width == 0 ? 1.0 : size.width / _lastSize.width;
     final sy = _lastSize.height == 0 ? 1.0 : size.height / _lastSize.height;
@@ -150,16 +156,16 @@ class _BokehBackgroundState extends State<BokehBackground>
       c.maskFilter = MaskFilter.blur(BlurStyle.normal, c.blurSigma);
       c.vx *= scale;
       c.vy *= scale;
-      // 화면 안쪽으로 클램프
+      
       final minX = c.radius;
-      final maxX = (_lastSize.width).clamp(0.0, double.infinity) - c.radius;
+      final maxX = size.width - c.radius;
       final minY = c.radius;
-      final maxY = (_lastSize.height).clamp(0.0, double.infinity) - c.radius;
+      final maxY = size.height - c.radius;
       if (maxX >= minX) c.x = c.x.clamp(minX, maxX);
       if (maxY >= minY) c.y = c.y.clamp(minY, maxY);
     }
 
-    // 개수 보정: 목표 개수와 차이가 나면 부드럽게 조정
+    // 개수 보정
     if (_circles.length < cfg.count) {
       final need = cfg.count - _circles.length;
       for (int i = 0; i < need; i++) {
@@ -203,54 +209,51 @@ class _BokehBackgroundState extends State<BokehBackground>
       min + (_random.nextDouble() * (max - min));
 
   double _randomSpeed() {
-    // px/sec 기준 속도. speedScale로 전역 감속/가속 조절
     return (12 + _random.nextDouble() * 18) * widget.speedScale;
   }
 
-  void _tick() {
-    if (!mounted) return;
-    final now = DateTime.now().millisecondsSinceEpoch;
-    if (_lastUpdateMs == 0) _lastUpdateMs = now;
-    final dtSec = (now - _lastUpdateMs) / 1000.0;
-    // 백그라운드/복귀 직후 큰 점프 방지
-    if (dtSec > 0.25) {
-      _lastUpdateMs = now;
-      return;
-    }
-    // 30fps 수준으로만 갱신해 부하·GC 압력 감소
-    if (dtSec < 1 / 30) return;
-    _lastUpdateMs = now;
+  void _onTick(Duration elapsed) {
+    if (!mounted || _circles.isEmpty) return;
+    
+    // 델타 시간 계산 (초 단위)
+    final dtSec = (elapsed - _lastElapsed).inMicroseconds / 1000000.0;
+    _lastElapsed = elapsed;
+    
+    // 백그라운드 복귀 시 큰 점프 방지
+    if (dtSec > 0.1 || dtSec <= 0) return;
 
-    setState(() {
-      for (final c in _circles) {
-        double x = c.x + c.vx * dtSec;
-        double y = c.y + c.vy * dtSec;
+    // 위치 업데이트 (setState 대신 직접 수정)
+    for (final c in _circles) {
+      double x = c.x + c.vx * dtSec;
+      double y = c.y + c.vy * dtSec;
 
-        final minX = c.radius;
-        final maxX = _lastSize.width - c.radius;
-        final minY = c.radius;
-        final maxY = _lastSize.height - c.radius;
+      final minX = c.radius;
+      final maxX = _lastSize.width - c.radius;
+      final minY = c.radius;
+      final maxY = _lastSize.height - c.radius;
 
-        if (x < minX) {
-          x = minX;
-          if (c.vx < 0) c.vx = -c.vx; // 방향 반전하되 경계 밖으로는 보내지 않음
-        } else if (x > maxX) {
-          x = maxX;
-          if (c.vx > 0) c.vx = -c.vx;
-        }
-
-        if (y < minY) {
-          y = minY;
-          if (c.vy < 0) c.vy = -c.vy;
-        } else if (y > maxY) {
-          y = maxY;
-          if (c.vy > 0) c.vy = -c.vy;
-        }
-
-        c.x = x;
-        c.y = y;
+      if (x < minX) {
+        x = minX;
+        if (c.vx < 0) c.vx = -c.vx;
+      } else if (x > maxX) {
+        x = maxX;
+        if (c.vx > 0) c.vx = -c.vx;
       }
-    });
+
+      if (y < minY) {
+        y = minY;
+        if (c.vy < 0) c.vy = -c.vy;
+      } else if (y > maxY) {
+        y = maxY;
+        if (c.vy > 0) c.vy = -c.vy;
+      }
+
+      c.x = x;
+      c.y = y;
+    }
+    
+    // CustomPainter만 갱신 (setState 대신)
+    _frameNotifier.value++;
   }
 
   @override
@@ -258,30 +261,36 @@ class _BokehBackgroundState extends State<BokehBackground>
     final theme = Theme.of(context);
     return IgnorePointer(
       ignoring: true,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final size = Size(constraints.maxWidth, constraints.maxHeight);
-          _ensureInit(size, theme.colorScheme);
+      child: RepaintBoundary(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final size = Size(constraints.maxWidth, constraints.maxHeight);
+            _ensureInit(size, theme.colorScheme);
 
-          return Container(
-            // 베이스 그라데이션
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  theme.colorScheme.surface.withValues(alpha: 0.95),
-                  theme.colorScheme.surface.withValues(alpha: 0.98),
-                ],
+            return Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    theme.colorScheme.surface.withValues(alpha: 0.95),
+                    theme.colorScheme.surface.withValues(alpha: 0.98),
+                  ],
+                ),
               ),
-            ),
-            child: CustomPaint(
-              painter: _BokehPainter(_circles),
-              isComplex: true,
-              willChange: true,
-            ),
-          );
-        },
+              child: ValueListenableBuilder<int>(
+                valueListenable: _frameNotifier,
+                builder: (context, _, __) {
+                  return CustomPaint(
+                    painter: _BokehPainter(_circles),
+                    isComplex: true,
+                    willChange: true,
+                  );
+                },
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -334,7 +343,7 @@ extension _AdaptiveConfig on _BokehBackgroundState {
         maxBlurSigma: widget.maxBlurSigma * 0.85,
       );
     } else if (width < 1200) {
-      // 태블릿/폴더블
+      // 태블릿
       return _BokehConfig(
         count: (widget.bubbleCount * 0.9).round().clamp(10, 28),
         minRadius: widget.minRadius * 0.9,

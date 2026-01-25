@@ -27,7 +27,10 @@ class IntroSection extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment:
+                    isSmallScreen
+                        ? MainAxisAlignment.center
+                        : MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   if (!isSmallScreen) _buildProfileImage(context),
@@ -48,25 +51,26 @@ class IntroSection extends StatelessWidget {
                               isSmallScreen ? TextAlign.center : TextAlign.start,
                         ),
                         const SizedBox(height: 8),
-                        ShaderMask(
-                          shaderCallback:
-                              (bounds) => LinearGradient(
-                                colors: [
-                                  theme.colorScheme.primary,
-                                  theme.colorScheme.secondary,
-                                ],
-                              ).createShader(bounds),
-                          child: Row(
-                            mainAxisSize:
-                                isSmallScreen
-                                    ? MainAxisSize.min
-                                    : MainAxisSize.max,
-                            mainAxisAlignment:
-                                isSmallScreen
-                                    ? MainAxisAlignment.center
-                                    : MainAxisAlignment.start,
-                            children: [
-                              Text(
+                        Row(
+                          mainAxisSize:
+                              isSmallScreen
+                                  ? MainAxisSize.min
+                                  : MainAxisSize.max,
+                          mainAxisAlignment:
+                              isSmallScreen
+                                  ? MainAxisAlignment.center
+                                  : MainAxisAlignment.start,
+                          children: [
+                            // 이름에만 그라데이션 적용
+                            ShaderMask(
+                              shaderCallback:
+                                  (bounds) => LinearGradient(
+                                    colors: [
+                                      theme.colorScheme.primary,
+                                      theme.colorScheme.secondary,
+                                    ],
+                                  ).createShader(bounds),
+                              child: Text(
                                 localizations.developerName,
                                 style: theme.textTheme.titleLarge?.copyWith(
                                   fontSize: isSmallScreen ? 32 : 48,
@@ -74,19 +78,21 @@ class IntroSection extends StatelessWidget {
                                   color: Colors.white,
                                 ),
                               ),
-                              if (localizations.locale.languageCode ==
-                                  "ko") ...[
-                                const SizedBox(width: 8),
-                                Text(
-                                  localizations.developerNameSuffix,
-                                  style: theme.textTheme.titleLarge?.copyWith(
-                                    fontSize: isSmallScreen ? 32 : 48,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                            ),
+                            if (localizations.locale.languageCode ==
+                                "ko") ...[
+                              const SizedBox(width: 8),
+                              // "입니다"는 일반 텍스트 색상 (라이트: 검정, 다크: 흰색)
+                              Text(
+                                localizations.developerNameSuffix,
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  fontSize: isSmallScreen ? 32 : 48,
+                                  fontWeight: FontWeight.bold,
+                                  color: theme.colorScheme.onSurface,
                                 ),
-                              ],
+                              ),
                             ],
-                          ),
+                          ],
                         ),
                         const SizedBox(height: 12),
                         Text(
@@ -151,8 +157,9 @@ class IntroSection extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 24),
-                        _buildSocialLinks(context, isSmallScreen),
+                        // TODO: 소셜 링크 아이콘 임시 비활성화
+                        // const SizedBox(height: 24),
+                        // _buildSocialLinks(context, isSmallScreen),
                       ],
                     ),
                   ),
