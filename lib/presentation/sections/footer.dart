@@ -2,7 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:portfolio_test2/core/app_localizations.dart';
 
 class Footer extends StatelessWidget {
-  const Footer({super.key});
+  final Function(int)? onNavigationItemTapped;
+
+  const Footer({super.key, this.onNavigationItemTapped});
+
+  // App bar와 동일한 네비게이션 아이템
+  static const _navItems = [
+    {'key': 'home', 'index': 0},
+    {'key': 'projects', 'index': 1},
+    {'key': 'contact', 'index': 2},
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -10,9 +19,8 @@ class Footer extends StatelessWidget {
       builder: (context, constraints) {
         final theme = Theme.of(context);
 
-        final isSmallScreen = constraints.maxWidth < 900;
-        final isMediumScreen =
-            constraints.maxWidth < 1000 && constraints.maxWidth >= 900;
+        // 1200px 미만은 모바일(태블릿 포함)
+        final isSmallScreen = constraints.maxWidth < 1200;
 
         return Container(
           padding: EdgeInsets.symmetric(
@@ -29,17 +37,13 @@ class Footer extends StatelessWidget {
             ),
           ),
           child:
-              isSmallScreen || isMediumScreen
+              isSmallScreen
                   ? Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       _buildLogo(context, theme),
                       const SizedBox(height: 24),
-                      _buildNavLinks(
-                        context,
-                        theme,
-                        isSmallScreen || isMediumScreen,
-                      ),
+                      _buildNavLinks(context, theme, isSmallScreen),
                       const SizedBox(height: 24),
                       _buildCopyright(context, theme),
                     ],
@@ -48,11 +52,7 @@ class Footer extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       _buildLogo(context, theme),
-                      _buildNavLinks(
-                        context,
-                        theme,
-                        isSmallScreen || isMediumScreen,
-                      ),
+                      _buildNavLinks(context, theme, isSmallScreen),
                       _buildCopyright(context, theme),
                     ],
                   ),
@@ -85,12 +85,19 @@ class Footer extends StatelessWidget {
     bool isSmallOrMedium,
   ) {
     final localizations = AppLocalizations.of(context);
-    final links = [
-      localizations.navHome,
-      localizations.navAbout,
-      localizations.navProjects,
-      localizations.navContact,
-    ];
+
+    String getLabel(String key) {
+      switch (key) {
+        case 'home':
+          return localizations.navHome;
+        case 'projects':
+          return localizations.navProjects;
+        case 'contact':
+          return localizations.navContact;
+        default:
+          return key;
+      }
+    }
 
     return isSmallOrMedium
         ? Wrap(
@@ -98,13 +105,14 @@ class Footer extends StatelessWidget {
           spacing: 8.0,
           runSpacing: 8.0,
           children:
-              links.map((link) {
+              _navItems.map((item) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () =>
+                        onNavigationItemTapped?.call(item['index'] as int),
                     child: Text(
-                      link,
+                      getLabel(item['key'] as String),
                       style: TextStyle(
                         color: theme.colorScheme.primary,
                         fontWeight: FontWeight.w500,
@@ -117,13 +125,14 @@ class Footer extends StatelessWidget {
         : Row(
           mainAxisSize: MainAxisSize.min,
           children:
-              links.map((link) {
+              _navItems.map((item) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () =>
+                        onNavigationItemTapped?.call(item['index'] as int),
                     child: Text(
-                      link,
+                      getLabel(item['key'] as String),
                       style: TextStyle(
                         color: theme.colorScheme.primary,
                         fontWeight: FontWeight.w500,

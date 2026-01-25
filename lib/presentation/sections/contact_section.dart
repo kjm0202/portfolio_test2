@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio_test2/core/app_localizations.dart';
-import 'package:portfolio_test2/presentation/sections/widgets/section_header.dart';
+import 'package:portfolio_test2/presentation/widgets/section_header.dart';
 
 class ContactSection extends StatefulWidget {
   const ContactSection({super.key});
@@ -32,7 +32,7 @@ class _ContactSectionState extends State<ContactSection> {
         if (!mounted) return const SizedBox.shrink();
         final theme = Theme.of(context);
 
-        final isSmallScreen = constraints.maxWidth < 800;
+        final isSmallScreen = constraints.maxWidth < 1200;
 
         return Container(
           padding: EdgeInsets.symmetric(
@@ -143,7 +143,7 @@ class _ContactSectionState extends State<ContactSection> {
               duration: const Duration(milliseconds: 200),
               transform:
                   _isHoveringSubmit
-                      ? (Matrix4.identity()..scale(1.05))
+                      ? Matrix4.diagonal3Values(1.05, 1.05, 1.0)
                       : Matrix4.identity(),
               child: ElevatedButton.icon(
                 onPressed: () {
